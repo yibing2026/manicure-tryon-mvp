@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>美甲试戴 MVP</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Try-On MVP</p>
+          <h1>先把“看得见效果”跑起来</h1>
+          <p class="hero-text">
+            上传手图与款式图，快速生成试戴预览；通过手动微调甲面位置，
+            把 MVP 先做成可演示、可评测、可迭代的第一版。
+          </p>
+        </div>
+        <div class="hero-card">
+          <p>当前版本能力</p>
+          <ul>
+            <li>本地上传或远程 URL 导入图片</li>
+            <li>五指甲面纹理贴合预览</li>
+            <li>逐指调整位置、尺寸、旋转角度</li>
+            <li>导出试戴结果图</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <aside class="panel controls">
+          <div class="panel-block">
+            <h2>0. 官方样例一键加载</h2>
+            <label class="input-group">
+              <span>官方手图样例</span>
+              <select id="officialHandSelect">
+                <option value="">正在读取官方样例...</option>
+              </select>
+            </label>
+            <label class="input-group">
+              <span>官方款式样例</span>
+              <select id="officialStyleSelect">
+                <option value="">正在读取官方样例...</option>
+              </select>
+            </label>
+            <div class="button-row">
+              <button id="loadOfficialPair">一键加载样例</button>
+              <button id="refreshOfficialSamples" class="secondary">刷新样例</button>
+            </div>
+            <p id="officialSampleMeta" class="status">
+              将从官方评测表里读取样例 URL，适合本地快速测试。
+            </p>
+          </div>
+
+          <div class="panel-block">
+            <h2>1. 导入素材</h2>
+            <label class="input-group">
+              <span>手图文件</span>
+              <input id="handFile" type="file" accept="image/*" />
+            </label>
+            <label class="input-group">
+              <span>款式图文件</span>
+              <input id="styleFile" type="file" accept="image/*" />
+            </label>
+          </div>
+
+          <div class="panel-block">
+            <h2>2. 远程图片 URL</h2>
+            <label class="input-group">
+              <span>手图 URL</span>
+              <input
+                id="handUrl"
+                type="url"
+                placeholder="https://example.com/hand.png"
+              />
+            </label>
+            <button id="loadHandUrl" class="secondary">加载手图 URL</button>
+
+            <label class="input-group">
+              <span>款式图 URL</span>
+              <input
+                id="styleUrl"
+                type="url"
+                placeholder="https://example.com/style.png"
+              />
+            </label>
+            <button id="loadStyleUrl" class="secondary">加载款式图 URL</button>
+          </div>
+
+          <div class="panel-block">
+            <h2>3. 快速调节</h2>
+            <div class="button-row">
+              <button id="resetLayout">重置甲面布局</button>
+              <button id="autoSpread" class="secondary">展开间距</button>
+            </div>
+            <label class="input-group">
+              <span>纹理透明度</span>
+              <input id="opacity" type="range" min="20" max="100" value="84" />
+            </label>
+            <label class="input-group">
+              <span>高光强度</span>
+              <input id="shine" type="range" min="0" max="100" value="26" />
+            </label>
+            <label class="input-group">
+              <span>边缘柔化</span>
+              <input id="feather" type="range" min="0" max="20" value="6" />
+            </label>
+          </div>
+
+          <div class="panel-block">
+            <h2>4. 单指微调</h2>
+            <label class="input-group">
+              <span>当前手指</span>
+              <select id="nailSelect"></select>
+            </label>
+            <label class="input-group">
+              <span>X 偏移</span>
+              <input id="offsetX" type="range" min="-200" max="200" value="0" />
+            </label>
+            <label class="input-group">
+              <span>Y 偏移</span>
+              <input id="offsetY" type="range" min="-200" max="200" value="0" />
+            </label>
+            <label class="input-group">
+              <span>宽度</span>
+              <input id="widthScale" type="range" min="30" max="220" value="100" />
+            </label>
+            <label class="input-group">
+              <span>高度</span>
+              <input
+                id="heightScale"
+                type="range"
+                min="30"
+                max="220"
+                value="100"
+              />
+            </label>
+            <label class="input-group">
+              <span>旋转角度</span>
+              <input
+                id="rotation"
+                type="range"
+                min="-90"
+                max="90"
+                value="0"
+              />
+            </label>
+          </div>
+
+          <div class="panel-block">
+            <h2>5. 导出</h2>
+            <button id="download">下载试戴图</button>
+            <p id="status" class="status">等待导入图片。</p>
+          </div>
+
+          <div class="panel-block">
+            <h2>6. AI 正式生成</h2>
+            <label class="input-group">
+              <span>生成提供方</span>
+              <select id="provider">
+                <option value="openai">ChatGPT / OpenAI</option>
+                <option value="doubao">豆包 / 火山方舟</option>
+              </select>
+            </label>
+            <label class="input-group">
+              <span>附加提示词</span>
+              <textarea
+                id="customPrompt"
+                rows="5"
+                placeholder="例如：更偏奶油光泽，保留法式边缘，甲片不要过长。"
+              ></textarea>
+            </label>
+            <button id="generateTryOn">生成正式试戴图</button>
+            <p class="status">
+              服务端会把原手图、款式图和当前预览图一起发送给模型，提升贴合度。
+            </p>
+          </div>
+        </aside>
+
+        <section class="panel preview">
+          <div class="preview-toolbar">
+            <div>
+              <h2>试戴画布</h2>
+              <p>点击甲面可快速切换到对应手指，拖动滑块做细调。</p>
+            </div>
+            <span class="pill">Canvas Preview</span>
+          </div>
+          <canvas id="canvas" width="900" height="1200"></canvas>
+          <section class="generated-panel">
+            <div class="generated-header">
+              <div>
+                <h2>生成结果</h2>
+                <p id="generationMeta">调用后会在这里显示正式试戴图。</p>
+              </div>
+              <span class="pill">Provider Output</span>
+            </div>
+            <div class="generated-frame">
+              <img id="generatedImage" alt="AI 生成的试戴结果" hidden />
+              <p id="generatedEmpty" class="generated-empty">
+                先在左侧导入图片并调好预览，再发起正式生成。
+              </p>
+            </div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="./app.js?v=20260603-dropdown-fix"></script>
+  </body>
+</html>

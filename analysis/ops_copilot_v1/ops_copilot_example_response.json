@@ -1,0 +1,33 @@
+{
+  "recommended_styles": [
+    {
+      "style_id": "style_10",
+      "reason": "Soft pink gradient matches the dating scenario and is highly wearable for the target persona.",
+      "fit_score": 92
+    },
+    {
+      "style_id": "style_23",
+      "reason": "Nude pearly finish offers broad appeal and strong low-risk try-on conversion potential.",
+      "fit_score": 89
+    },
+    {
+      "style_id": "style_13",
+      "reason": "Elegant pink-nude line detail creates a slightly upgraded look without losing daily wearability.",
+      "fit_score": 85
+    }
+  ],
+  "campaign_message": {
+    "headline": "约会氛围感美甲，一试就心动",
+    "subheadline": "优先推荐温柔粉调与裸色珠光款，适合通勤后直接赴约。",
+    "cta": "立即试戴"
+  },
+  "operator_actions": [
+    "Place style_10 and style_23 in the first recommendation row for dating-intent users.",
+    "Use soft pink and nude visual framing in the banner creative.",
+    "Push try-on first instead of direct purchase messaging."
+  ],
+  "risk_notes": [
+    "style_25 is more playful and student-oriented; it may weaken the consistency of a young-professional dating campaign."
+  ],
+  "strategy_summary": "Use soft elegant mid-price styles to maximize try-on willingness for young-professional dating traffic."
+}

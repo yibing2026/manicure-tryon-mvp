@@ -1,0 +1,67 @@
+{
+  "workbook": "D:\\Manicure\\命题三美甲评测数据（对外版）.xlsx",
+  "provider": "doubao",
+  "endpoint": "http://localhost:3000/api/generate-tryon",
+  "pairCount": 1,
+  "selectedPairs": [
+    "hand_01_style_01"
+  ],
+  "qualityRetryAttempts": 2,
+  "retryPreset": "style",
+  "requestRetries": 2,
+  "results": [
+    {
+      "pair": "hand_01_style_01",
+      "status": "success",
+      "output": "outputs\\official-paired\\20260601-205511\\hand_01_style_01.png",
+      "attempts": [
+        {
+          "attempt": 0,
+          "output": "outputs\\official-paired\\20260601-205511\\hand_01_style_01.png",
+          "prompt": "",
+          "provider": "doubao",
+          "model": "doubao-seedream-5-0-260128@250828",
+          "providerDebug": {
+            "model": "doubao-seedream-5-0-260128",
+            "version": "250828",
+            "size": "2K",
+            "response_format": "url",
+            "reference_images_count": 3,
+            "field_used": "image"
+          }
+        },
+        {
+          "attempt": 1,
+          "output": "outputs\\official-paired\\20260601-205511\\hand_01_style_01.retry_1.png",
+          "prompt": "Every visible nail must clearly show the target manicure design from the reference image. Do not leave nails bare, nearly nude, or close to the original natural nail look. Preserve the reference colors, patterns, finish, and decoration.",
+          "provider": "doubao",
+          "model": "doubao-seedream-5-0-260128@250828",
+          "providerDebug": {
+            "model": "doubao-seedream-5-0-260128",
+            "version": "250828",
+            "size": "2K",
+            "response_format": "url",
+            "reference_images_count": 3,
+            "field_used": "image"
+          }
+        },
+        {
+          "attempt": 2,
+          "output": "outputs\\official-paired\\20260601-205511\\hand_01_style_01.retry_2.png",
+          "prompt": "Increase reference-style fidelity. Make the manicure visibly present on each nail while still preserving the original hand pose, skin tone, and lighting.",
+          "provider": "doubao",
+          "model": "doubao-seedream-5-0-260128@250828",
+          "providerDebug": {
+            "model": "doubao-seedream-5-0-260128",
+            "version": "250828",
+            "size": "2K",
+            "response_format": "url",
+            "reference_images_count": 3,
+            "field_used": "image"
+          }
+        }
+      ],
+      "elapsedSeconds": 104.63
+    }
+  ]
+}

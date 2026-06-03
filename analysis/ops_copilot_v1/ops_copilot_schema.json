@@ -1,0 +1,51 @@
+{
+  "name": "operations_copilot_v1",
+  "description": "Input/output contract for manicure operations strategy generation.",
+  "input": {
+    "campaign_context": {
+      "date": "string",
+      "objective": "string",
+      "channel": "string",
+      "budget_level": "low | medium | high",
+      "target_conversion_stage": "awareness | click | try_on | save | purchase"
+    },
+    "user_segment": {
+      "persona": "minimalist | young-professional | fashion-lover | student | luxury-seeker | trend-follower | bridal-user",
+      "occasion": "commute | dating | party | daily | wedding | festival",
+      "preferred_colors": ["string"],
+      "price_sensitivity": "budget | mid | premium",
+      "style_preference": ["string"]
+    },
+    "inventory_context": {
+      "candidate_styles": ["style_XX"],
+      "priority_clusters": ["premium_party_gloss | bridal_elegant_clean | cute_youth_festival"],
+      "inventory_notes": "string"
+    },
+    "strategy_context": {
+      "persona_rule_hint": "string",
+      "occasion_rule_hint": "string",
+      "operator_goal": "string"
+    }
+  },
+  "output": {
+    "recommended_styles": [
+      {
+        "style_id": "style_XX",
+        "reason": "string",
+        "fit_score": "0-100"
+      }
+    ],
+    "campaign_message": {
+      "headline": "string",
+      "subheadline": "string",
+      "cta": "string"
+    },
+    "operator_actions": [
+      "string"
+    ],
+    "risk_notes": [
+      "string"
+    ],
+    "strategy_summary": "string"
+  }
+}

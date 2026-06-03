@@ -1,0 +1,13 @@
+{
+  "name": "manicure-tryon-mvp",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.mjs",
+    "batch:official": "python scripts/batch_generate_official_pairs.py",
+    "labels:styles": "python scripts/export_style_label_template.py",
+    "analyze:styles": "python scripts/analyze_style_labels.py",
+    "strategy:ops": "python scripts/build_ops_strategy_rules.py"
+  }
+}

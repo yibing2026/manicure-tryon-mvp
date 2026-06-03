@@ -1,0 +1,26 @@
+{
+  "campaign_context": {
+    "date": "2026-06-03",
+    "objective": "promote dating-week manicure selections",
+    "channel": "homepage_banner",
+    "budget_level": "medium",
+    "target_conversion_stage": "try_on"
+  },
+  "user_segment": {
+    "persona": "young-professional",
+    "occasion": "dating",
+    "preferred_colors": ["pink", "nude"],
+    "price_sensitivity": "mid",
+    "style_preference": ["elegant", "sweet"]
+  },
+  "inventory_context": {
+    "candidate_styles": ["style_02", "style_10", "style_13", "style_23", "style_25"],
+    "priority_clusters": [],
+    "inventory_notes": "Focus on wearable styles with soft visual tone."
+  },
+  "strategy_context": {
+    "persona_rule_hint": "Prioritize elegant, sweet styles with gray, green, nude tones for young-professional.",
+    "occasion_rule_hint": "Build dating campaigns around elegant, sweet styles and highlight green, nude, pink palettes.",
+    "operator_goal": "Increase try-on rate first, then lift saves."
+  }
+}

@@ -1,0 +1,216 @@
+{
+  "workbook": "D:\\Manicure\\命题三美甲评测数据（对外版）.xlsx",
+  "provider": "doubao",
+  "endpoint": "http://localhost:3000/api/generate-tryon",
+  "pairCount": 13,
+  "results": [
+    {
+      "pair": "hand_01_style_01",
+      "status": "success",
+      "output": "outputs\\official-paired\\20260601-201746\\hand_01_style_01.png",
+      "provider": "doubao",
+      "model": "doubao-seedream-5-0-260128@250828",
+      "providerDebug": {
+        "model": "doubao-seedream-5-0-260128",
+        "version": "250828",
+        "size": "2K",
+        "response_format": "url",
+        "reference_images_count": 3,
+        "field_used": "image"
+      },
+      "elapsedSeconds": 34.58
+    },
+    {
+      "pair": "hand_02_style_02",
+      "status": "success",
+      "output": "outputs\\official-paired\\20260601-201746\\hand_02_style_02.png",
+      "provider": "doubao",
+      "model": "doubao-seedream-5-0-260128@250828",
+      "providerDebug": {
+        "model": "doubao-seedream-5-0-260128",
+        "version": "250828",
+        "size": "2K",
+        "response_format": "url",
+        "reference_images_count": 3,
+        "field_used": "image"
+      },
+      "elapsedSeconds": 37.88
+    },
+    {
+      "pair": "hand_03_style_03",
+      "status": "success",
+      "output": "outputs\\official-paired\\20260601-201746\\hand_03_style_03.png",
+      "provider": "doubao",
+      "model": "doubao-seedream-5-0-260128@250828",
+      "providerDebug": {
+        "model": "doubao-seedream-5-0-260128",
+        "version": "250828",
+        "size": "2K",
+        "response_format": "url",
+        "reference_images_count": 3,
+        "field_used": "image"
+      },
+      "elapsedSeconds": 45.53
+    },
+    {
+      "pair": "hand_04_style_04",
+      "status": "success",
+      "output": "outputs\\official-paired\\20260601-201746\\hand_04_style_04.png",
+      "provider": "doubao",
+      "model": "doubao-seedream-5-0-260128@250828",
+      "providerDebug": {
+        "model": "doubao-seedream-5-0-260128",
+        "version": "250828",
+        "size": "2K",
+        "response_format": "url",
+        "reference_images_count": 3,
+        "field_used": "image"
+      },
+      "elapsedSeconds": 40.97
+    },
+    {
+      "pair": "hand_05_style_05",
+      "status": "success",
+      "output": "outputs\\official-paired\\20260601-201746\\hand_05_style_05.png",
+      "provider": "doubao",
+      "model": "doubao-seedream-5-0-260128@250828",
+      "providerDebug": {
+        "model": "doubao-seedream-5-0-260128",
+        "version": "250828",
+        "size": "2K",
+        "response_format": "url",
+        "reference_images_count": 3,
+        "field_used": "image"
+      },
+      "elapsedSeconds": 37.27
+    },
+    {
+      "pair": "hand_06_style_06",
+      "status": "success",
+      "output": "outputs\\official-paired\\20260601-201746\\hand_06_style_06.png",
+      "provider": "doubao",
+      "model": "doubao-seedream-5-0-260128@250828",
+      "providerDebug": {
+        "model": "doubao-seedream-5-0-260128",
+        "version": "250828",
+        "size": "2K",
+        "response_format": "url",
+        "reference_images_count": 3,
+        "field_used": "image"
+      },
+      "elapsedSeconds": 44.14
+    },
+    {
+      "pair": "hand_07_style_07",
+      "status": "success",
+      "output": "outputs\\official-paired\\20260601-201746\\hand_07_style_07.png",
+      "provider": "doubao",
+      "model": "doubao-seedream-5-0-260128@250828",
+      "providerDebug": {
+        "model": "doubao-seedream-5-0-260128",
+        "version": "250828",
+        "size": "2K",
+        "response_format": "url",
+        "reference_images_count": 3,
+        "field_used": "image"
+      },
+      "elapsedSeconds": 51.1
+    },
+    {
+      "pair": "hand_08_style_08",
+      "status": "success",
+      "output": "outputs\\official-paired\\20260601-201746\\hand_08_style_08.png",
+      "provider": "doubao",
+      "model": "doubao-seedream-5-0-260128@250828",
+      "providerDebug": {
+        "model": "doubao-seedream-5-0-260128",
+        "version": "250828",
+        "size": "2K",
+        "response_format": "url",
+        "reference_images_count": 3,
+        "field_used": "image"
+      },
+      "elapsedSeconds": 46.9
+    },
+    {
+      "pair": "hand_09_style_09",
+      "status": "success",
+      "output": "outputs\\official-paired\\20260601-201746\\hand_09_style_09.png",
+      "provider": "doubao",
+      "model": "doubao-seedream-5-0-260128@250828",
+      "providerDebug": {
+        "model": "doubao-seedream-5-0-260128",
+        "version": "250828",
+        "size": "2K",
+        "response_format": "url",
+        "reference_images_count": 3,
+        "field_used": "image"
+      },
+      "elapsedSeconds": 34.98
+    },
+    {
+      "pair": "hand_10_style_10",
+      "status": "success",
+      "output": "outputs\\official-paired\\20260601-201746\\hand_10_style_10.png",
+      "provider": "doubao",
+      "model": "doubao-seedream-5-0-260128@250828",
+      "providerDebug": {
+        "model": "doubao-seedream-5-0-260128",
+        "version": "250828",
+        "size": "2K",
+        "response_format": "url",
+        "reference_images_count": 3,
+        "field_used": "image"
+      },
+      "elapsedSeconds": 40.71
+    },
+    {
+      "pair": "hand_11_style_11",
+      "status": "success",
+      "output": "outputs\\official-paired\\20260601-201746\\hand_11_style_11.png",
+      "provider": "doubao",
+      "model": "doubao-seedream-5-0-260128@250828",
+      "providerDebug": {
+        "model": "doubao-seedream-5-0-260128",
+        "version": "250828",
+        "size": "2K",
+        "response_format": "url",
+        "reference_images_count": 3,
+        "field_used": "image"
+      },
+      "elapsedSeconds": 34.32
+    },
+    {
+      "pair": "hand_12_style_12",
+      "status": "success",
+      "output": "outputs\\official-paired\\20260601-201746\\hand_12_style_12.png",
+      "provider": "doubao",
+      "model": "doubao-seedream-5-0-260128@250828",
+      "providerDebug": {
+        "model": "doubao-seedream-5-0-260128",
+        "version": "250828",
+        "size": "2K",
+        "response_format": "url",
+        "reference_images_count": 3,
+        "field_used": "image"
+      },
+      "elapsedSeconds": 42.2
+    },
+    {
+      "pair": "hand_13_style_13",
+      "status": "success",
+      "output": "outputs\\official-paired\\20260601-201746\\hand_13_style_13.png",
+      "provider": "doubao",
+      "model": "doubao-seedream-5-0-260128@250828",
+      "providerDebug": {
+        "model": "doubao-seedream-5-0-260128",
+        "version": "250828",
+        "size": "2K",
+        "response_format": "url",
+        "reference_images_count": 3,
+        "field_used": "image"
+      },
+      "elapsedSeconds": 38.41
+    }
+  ]
+}

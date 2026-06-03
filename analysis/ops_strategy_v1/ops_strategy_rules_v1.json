@@ -1,0 +1,833 @@
+{
+  "source_dataset": "D:\\MVP\\data\\official_style_label_draft_v1.csv",
+  "persona_rules": {
+    "minimalist": {
+      "recommended_styles": [
+        {
+          "style_id": "style_01",
+          "style_category": "minimal",
+          "primary_color": "white",
+          "occasion": "commute",
+          "target_persona": "minimalist",
+          "trend_keywords": "clean, white, office",
+          "price_band": "mid"
+        }
+      ],
+      "preferred_occasions": [
+        "commute"
+      ],
+      "preferred_colors": [
+        "white"
+      ],
+      "preferred_style_categories": [
+        "minimal"
+      ],
+      "strategy_hint": "Prioritize minimal styles with white tones for minimalist."
+    },
+    "young-professional": {
+      "recommended_styles": [
+        {
+          "style_id": "style_02",
+          "style_category": "elegant",
+          "primary_color": "green",
+          "occasion": "dating",
+          "target_persona": "young-professional",
+          "trend_keywords": "olive, contrast, elegant",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_04",
+          "style_category": "elegant",
+          "primary_color": "gray",
+          "occasion": "commute",
+          "target_persona": "young-professional",
+          "trend_keywords": "greige, silver, minimalist",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_10",
+          "style_category": "sweet",
+          "primary_color": "pink",
+          "occasion": "dating",
+          "target_persona": "young-professional",
+          "trend_keywords": "pink, blush, soft",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_13",
+          "style_category": "elegant",
+          "primary_color": "pink",
+          "occasion": "wedding",
+          "target_persona": "young-professional",
+          "trend_keywords": "pink-nude, line, elegant",
+          "price_band": "mid"
+        }
+      ],
+      "preferred_occasions": [
+        "commute",
+        "dating",
+        "wedding"
+      ],
+      "preferred_colors": [
+        "gray",
+        "green",
+        "nude",
+        "pink"
+      ],
+      "preferred_style_categories": [
+        "elegant",
+        "sweet"
+      ],
+      "strategy_hint": "Prioritize elegant, sweet styles with gray, green, nude tones for young-professional."
+    },
+    "fashion-lover": {
+      "recommended_styles": [
+        {
+          "style_id": "style_03",
+          "style_category": "luxury",
+          "primary_color": "black",
+          "occasion": "party",
+          "target_persona": "fashion-lover",
+          "trend_keywords": "rose, dark, statement",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_07",
+          "style_category": "cool-girl",
+          "primary_color": "nude",
+          "occasion": "party",
+          "target_persona": "fashion-lover",
+          "trend_keywords": "animal-print, silver, edgy",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_08",
+          "style_category": "cool-girl",
+          "primary_color": "black",
+          "occasion": "party",
+          "target_persona": "fashion-lover",
+          "trend_keywords": "black, chrome, sharp",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_12",
+          "style_category": "cool-girl",
+          "primary_color": "black",
+          "occasion": "party",
+          "target_persona": "fashion-lover",
+          "trend_keywords": "black, green, luxe",
+          "price_band": "premium"
+        }
+      ],
+      "preferred_occasions": [
+        "party"
+      ],
+      "preferred_colors": [
+        "black",
+        "blue",
+        "nude",
+        "red"
+      ],
+      "preferred_style_categories": [
+        "cool-girl",
+        "luxury"
+      ],
+      "strategy_hint": "Prioritize cool-girl, luxury styles with black, blue, nude tones for fashion-lover."
+    },
+    "student": {
+      "recommended_styles": [
+        {
+          "style_id": "style_05",
+          "style_category": "daily",
+          "primary_color": "nude",
+          "occasion": "daily",
+          "target_persona": "student",
+          "trend_keywords": "checkerboard, nude, playful",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_15",
+          "style_category": "sweet",
+          "primary_color": "pink",
+          "occasion": "festival",
+          "target_persona": "student",
+          "trend_keywords": "cute, charm, colorful",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_18",
+          "style_category": "sweet",
+          "primary_color": "nude",
+          "occasion": "festival",
+          "target_persona": "student",
+          "trend_keywords": "cartoon, colorful, cute",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_25",
+          "style_category": "sweet",
+          "primary_color": "red",
+          "occasion": "dating",
+          "target_persona": "student",
+          "trend_keywords": "red, heart, cute",
+          "price_band": "mid"
+        }
+      ],
+      "preferred_occasions": [
+        "daily",
+        "dating",
+        "festival"
+      ],
+      "preferred_colors": [
+        "nude",
+        "pink",
+        "red"
+      ],
+      "preferred_style_categories": [
+        "daily",
+        "sweet"
+      ],
+      "strategy_hint": "Prioritize daily, sweet styles with nude, pink, red tones for student."
+    },
+    "luxury-seeker": {
+      "recommended_styles": [
+        {
+          "style_id": "style_06",
+          "style_category": "luxury",
+          "primary_color": "nude",
+          "occasion": "wedding",
+          "target_persona": "luxury-seeker",
+          "trend_keywords": "crystal, gold, luxury",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_19",
+          "style_category": "luxury",
+          "primary_color": "nude",
+          "occasion": "wedding",
+          "target_persona": "luxury-seeker",
+          "trend_keywords": "champagne, crystal, luxe",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_20",
+          "style_category": "luxury",
+          "primary_color": "nude",
+          "occasion": "party",
+          "target_persona": "luxury-seeker",
+          "trend_keywords": "chrome, crystal, silver",
+          "price_band": "premium"
+        }
+      ],
+      "preferred_occasions": [
+        "party",
+        "wedding"
+      ],
+      "preferred_colors": [
+        "nude"
+      ],
+      "preferred_style_categories": [
+        "luxury"
+      ],
+      "strategy_hint": "Prioritize luxury styles with nude tones for luxury-seeker."
+    },
+    "trend-follower": {
+      "recommended_styles": [
+        {
+          "style_id": "style_09",
+          "style_category": "cool-girl",
+          "primary_color": "black",
+          "occasion": "party",
+          "target_persona": "trend-follower",
+          "trend_keywords": "black, star, glam",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_16",
+          "style_category": "sweet",
+          "primary_color": "pink",
+          "occasion": "festival",
+          "target_persona": "trend-follower",
+          "trend_keywords": "floral, pink, festive",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_21",
+          "style_category": "cool-girl",
+          "primary_color": "blue",
+          "occasion": "daily",
+          "target_persona": "trend-follower",
+          "trend_keywords": "blue, playful, accent",
+          "price_band": "mid"
+        }
+      ],
+      "preferred_occasions": [
+        "daily",
+        "festival",
+        "party"
+      ],
+      "preferred_colors": [
+        "black",
+        "blue",
+        "pink"
+      ],
+      "preferred_style_categories": [
+        "cool-girl",
+        "sweet"
+      ],
+      "strategy_hint": "Prioritize cool-girl, sweet styles with black, blue, pink tones for trend-follower."
+    },
+    "bridal-user": {
+      "recommended_styles": [
+        {
+          "style_id": "style_11",
+          "style_category": "elegant",
+          "primary_color": "nude",
+          "occasion": "wedding",
+          "target_persona": "bridal-user",
+          "trend_keywords": "pearl, bridal, reflective",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_14",
+          "style_category": "elegant",
+          "primary_color": "white",
+          "occasion": "wedding",
+          "target_persona": "bridal-user",
+          "trend_keywords": "milky-white, clean, bridal",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_17",
+          "style_category": "luxury",
+          "primary_color": "white",
+          "occasion": "wedding",
+          "target_persona": "bridal-user",
+          "trend_keywords": "transparent, crystal, bridal",
+          "price_band": "premium"
+        }
+      ],
+      "preferred_occasions": [
+        "wedding"
+      ],
+      "preferred_colors": [
+        "nude",
+        "white"
+      ],
+      "preferred_style_categories": [
+        "elegant",
+        "luxury"
+      ],
+      "strategy_hint": "Prioritize elegant, luxury styles with nude, white tones for bridal-user."
+    }
+  },
+  "occasion_rules": {
+    "commute": {
+      "recommended_styles": [
+        {
+          "style_id": "style_01",
+          "style_category": "minimal",
+          "primary_color": "white",
+          "occasion": "commute",
+          "target_persona": "minimalist",
+          "trend_keywords": "clean, white, office",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_04",
+          "style_category": "elegant",
+          "primary_color": "gray",
+          "occasion": "commute",
+          "target_persona": "young-professional",
+          "trend_keywords": "greige, silver, minimalist",
+          "price_band": "mid"
+        }
+      ],
+      "hero_colors": [
+        "gray",
+        "white"
+      ],
+      "hero_categories": [
+        "elegant",
+        "minimal"
+      ],
+      "campaign_angle": "Build commute campaigns around elegant, minimal styles and highlight gray, white palettes."
+    },
+    "dating": {
+      "recommended_styles": [
+        {
+          "style_id": "style_02",
+          "style_category": "elegant",
+          "primary_color": "green",
+          "occasion": "dating",
+          "target_persona": "young-professional",
+          "trend_keywords": "olive, contrast, elegant",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_10",
+          "style_category": "sweet",
+          "primary_color": "pink",
+          "occasion": "dating",
+          "target_persona": "young-professional",
+          "trend_keywords": "pink, blush, soft",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_23",
+          "style_category": "elegant",
+          "primary_color": "nude",
+          "occasion": "dating",
+          "target_persona": "young-professional",
+          "trend_keywords": "nude, pearly, soft",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_25",
+          "style_category": "sweet",
+          "primary_color": "red",
+          "occasion": "dating",
+          "target_persona": "student",
+          "trend_keywords": "red, heart, cute",
+          "price_band": "mid"
+        }
+      ],
+      "hero_colors": [
+        "green",
+        "nude",
+        "pink",
+        "red"
+      ],
+      "hero_categories": [
+        "elegant",
+        "sweet"
+      ],
+      "campaign_angle": "Build dating campaigns around elegant, sweet styles and highlight green, nude, pink palettes."
+    },
+    "party": {
+      "recommended_styles": [
+        {
+          "style_id": "style_03",
+          "style_category": "luxury",
+          "primary_color": "black",
+          "occasion": "party",
+          "target_persona": "fashion-lover",
+          "trend_keywords": "rose, dark, statement",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_07",
+          "style_category": "cool-girl",
+          "primary_color": "nude",
+          "occasion": "party",
+          "target_persona": "fashion-lover",
+          "trend_keywords": "animal-print, silver, edgy",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_08",
+          "style_category": "cool-girl",
+          "primary_color": "black",
+          "occasion": "party",
+          "target_persona": "fashion-lover",
+          "trend_keywords": "black, chrome, sharp",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_09",
+          "style_category": "cool-girl",
+          "primary_color": "black",
+          "occasion": "party",
+          "target_persona": "trend-follower",
+          "trend_keywords": "black, star, glam",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_12",
+          "style_category": "cool-girl",
+          "primary_color": "black",
+          "occasion": "party",
+          "target_persona": "fashion-lover",
+          "trend_keywords": "black, green, luxe",
+          "price_band": "premium"
+        }
+      ],
+      "hero_colors": [
+        "black",
+        "blue",
+        "nude",
+        "red"
+      ],
+      "hero_categories": [
+        "cool-girl",
+        "luxury"
+      ],
+      "campaign_angle": "Build party campaigns around cool-girl, luxury styles and highlight black, blue, nude palettes."
+    },
+    "daily": {
+      "recommended_styles": [
+        {
+          "style_id": "style_05",
+          "style_category": "daily",
+          "primary_color": "nude",
+          "occasion": "daily",
+          "target_persona": "student",
+          "trend_keywords": "checkerboard, nude, playful",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_21",
+          "style_category": "cool-girl",
+          "primary_color": "blue",
+          "occasion": "daily",
+          "target_persona": "trend-follower",
+          "trend_keywords": "blue, playful, accent",
+          "price_band": "mid"
+        }
+      ],
+      "hero_colors": [
+        "blue",
+        "nude"
+      ],
+      "hero_categories": [
+        "cool-girl",
+        "daily"
+      ],
+      "campaign_angle": "Build daily campaigns around cool-girl, daily styles and highlight blue, nude palettes."
+    },
+    "wedding": {
+      "recommended_styles": [
+        {
+          "style_id": "style_06",
+          "style_category": "luxury",
+          "primary_color": "nude",
+          "occasion": "wedding",
+          "target_persona": "luxury-seeker",
+          "trend_keywords": "crystal, gold, luxury",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_11",
+          "style_category": "elegant",
+          "primary_color": "nude",
+          "occasion": "wedding",
+          "target_persona": "bridal-user",
+          "trend_keywords": "pearl, bridal, reflective",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_13",
+          "style_category": "elegant",
+          "primary_color": "pink",
+          "occasion": "wedding",
+          "target_persona": "young-professional",
+          "trend_keywords": "pink-nude, line, elegant",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_14",
+          "style_category": "elegant",
+          "primary_color": "white",
+          "occasion": "wedding",
+          "target_persona": "bridal-user",
+          "trend_keywords": "milky-white, clean, bridal",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_17",
+          "style_category": "luxury",
+          "primary_color": "white",
+          "occasion": "wedding",
+          "target_persona": "bridal-user",
+          "trend_keywords": "transparent, crystal, bridal",
+          "price_band": "premium"
+        }
+      ],
+      "hero_colors": [
+        "nude",
+        "pink",
+        "white"
+      ],
+      "hero_categories": [
+        "elegant",
+        "luxury"
+      ],
+      "campaign_angle": "Build wedding campaigns around elegant, luxury styles and highlight nude, pink, white palettes."
+    },
+    "festival": {
+      "recommended_styles": [
+        {
+          "style_id": "style_15",
+          "style_category": "sweet",
+          "primary_color": "pink",
+          "occasion": "festival",
+          "target_persona": "student",
+          "trend_keywords": "cute, charm, colorful",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_16",
+          "style_category": "sweet",
+          "primary_color": "pink",
+          "occasion": "festival",
+          "target_persona": "trend-follower",
+          "trend_keywords": "floral, pink, festive",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_18",
+          "style_category": "sweet",
+          "primary_color": "nude",
+          "occasion": "festival",
+          "target_persona": "student",
+          "trend_keywords": "cartoon, colorful, cute",
+          "price_band": "mid"
+        }
+      ],
+      "hero_colors": [
+        "nude",
+        "pink"
+      ],
+      "hero_categories": [
+        "sweet"
+      ],
+      "campaign_angle": "Build festival campaigns around sweet styles and highlight nude, pink palettes."
+    }
+  },
+  "trend_clusters": [
+    {
+      "cluster_name": "premium_party_gloss",
+      "match_rule": {
+        "style_category": [
+          "luxury",
+          "cool-girl"
+        ],
+        "occasion": [
+          "party"
+        ]
+      },
+      "styles": [
+        {
+          "style_id": "style_03",
+          "style_category": "luxury",
+          "primary_color": "black",
+          "occasion": "party",
+          "target_persona": "fashion-lover",
+          "trend_keywords": "rose, dark, statement",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_07",
+          "style_category": "cool-girl",
+          "primary_color": "nude",
+          "occasion": "party",
+          "target_persona": "fashion-lover",
+          "trend_keywords": "animal-print, silver, edgy",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_08",
+          "style_category": "cool-girl",
+          "primary_color": "black",
+          "occasion": "party",
+          "target_persona": "fashion-lover",
+          "trend_keywords": "black, chrome, sharp",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_09",
+          "style_category": "cool-girl",
+          "primary_color": "black",
+          "occasion": "party",
+          "target_persona": "trend-follower",
+          "trend_keywords": "black, star, glam",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_12",
+          "style_category": "cool-girl",
+          "primary_color": "black",
+          "occasion": "party",
+          "target_persona": "fashion-lover",
+          "trend_keywords": "black, green, luxe",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_20",
+          "style_category": "luxury",
+          "primary_color": "nude",
+          "occasion": "party",
+          "target_persona": "luxury-seeker",
+          "trend_keywords": "chrome, crystal, silver",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_22",
+          "style_category": "luxury",
+          "primary_color": "red",
+          "occasion": "party",
+          "target_persona": "fashion-lover",
+          "trend_keywords": "red-glitter, evening, shiny",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_24",
+          "style_category": "luxury",
+          "primary_color": "blue",
+          "occasion": "party",
+          "target_persona": "fashion-lover",
+          "trend_keywords": "mirror, blue, jewel",
+          "price_band": "premium"
+        }
+      ],
+      "operator_action": "Use for high-attention homepage slots and night-out campaign creatives."
+    },
+    {
+      "cluster_name": "bridal_elegant_clean",
+      "match_rule": {
+        "occasion": [
+          "wedding"
+        ],
+        "style_category": [
+          "elegant",
+          "luxury"
+        ]
+      },
+      "styles": [
+        {
+          "style_id": "style_06",
+          "style_category": "luxury",
+          "primary_color": "nude",
+          "occasion": "wedding",
+          "target_persona": "luxury-seeker",
+          "trend_keywords": "crystal, gold, luxury",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_11",
+          "style_category": "elegant",
+          "primary_color": "nude",
+          "occasion": "wedding",
+          "target_persona": "bridal-user",
+          "trend_keywords": "pearl, bridal, reflective",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_13",
+          "style_category": "elegant",
+          "primary_color": "pink",
+          "occasion": "wedding",
+          "target_persona": "young-professional",
+          "trend_keywords": "pink-nude, line, elegant",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_14",
+          "style_category": "elegant",
+          "primary_color": "white",
+          "occasion": "wedding",
+          "target_persona": "bridal-user",
+          "trend_keywords": "milky-white, clean, bridal",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_17",
+          "style_category": "luxury",
+          "primary_color": "white",
+          "occasion": "wedding",
+          "target_persona": "bridal-user",
+          "trend_keywords": "transparent, crystal, bridal",
+          "price_band": "premium"
+        },
+        {
+          "style_id": "style_19",
+          "style_category": "luxury",
+          "primary_color": "nude",
+          "occasion": "wedding",
+          "target_persona": "luxury-seeker",
+          "trend_keywords": "champagne, crystal, luxe",
+          "price_band": "premium"
+        }
+      ],
+      "operator_action": "Package as bridal / event bundles and use polished trust-building copy."
+    },
+    {
+      "cluster_name": "cute_youth_festival",
+      "match_rule": {
+        "style_category": [
+          "sweet",
+          "daily"
+        ],
+        "target_persona": [
+          "student",
+          "trend-follower"
+        ]
+      },
+      "styles": [
+        {
+          "style_id": "style_05",
+          "style_category": "daily",
+          "primary_color": "nude",
+          "occasion": "daily",
+          "target_persona": "student",
+          "trend_keywords": "checkerboard, nude, playful",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_15",
+          "style_category": "sweet",
+          "primary_color": "pink",
+          "occasion": "festival",
+          "target_persona": "student",
+          "trend_keywords": "cute, charm, colorful",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_16",
+          "style_category": "sweet",
+          "primary_color": "pink",
+          "occasion": "festival",
+          "target_persona": "trend-follower",
+          "trend_keywords": "floral, pink, festive",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_18",
+          "style_category": "sweet",
+          "primary_color": "nude",
+          "occasion": "festival",
+          "target_persona": "student",
+          "trend_keywords": "cartoon, colorful, cute",
+          "price_band": "mid"
+        },
+        {
+          "style_id": "style_25",
+          "style_category": "sweet",
+          "primary_color": "red",
+          "occasion": "dating",
+          "target_persona": "student",
+          "trend_keywords": "red, heart, cute",
+          "price_band": "mid"
+        }
+      ],
+      "operator_action": "Use for campus, holiday, and low-threshold conversion campaigns."
+    }
+  ],
+  "inventory_actions": [
+    {
+      "theme": "inventory_balance",
+      "observation": "Long styles (11) exceed short styles (7).",
+      "action": "Increase short daily-safe inventory exposure for broader conversion coverage."
+    },
+    {
+      "theme": "premium_focus",
+      "observation": "Premium styles count is 13.",
+      "action": "Create premium merchandising slots and bundle copy for party and bridal users."
+    },
+    {
+      "theme": "daily_gap",
+      "observation": "Daily/commute occasion styles count is 4.",
+      "action": "Promote daily-safe styles aggressively to office and minimalist audiences to fill the practical-demand gap."
+    }
+  ]
+}

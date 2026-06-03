@@ -1,0 +1,235 @@
+{
+  "total_styles": 25,
+  "top_primary_colors": [
+    {
+      "value": "nude",
+      "count": 8
+    },
+    {
+      "value": "black",
+      "count": 4
+    },
+    {
+      "value": "pink",
+      "count": 4
+    },
+    {
+      "value": "white",
+      "count": 3
+    },
+    {
+      "value": "blue",
+      "count": 2
+    },
+    {
+      "value": "red",
+      "count": 2
+    },
+    {
+      "value": "green",
+      "count": 1
+    },
+    {
+      "value": "gray",
+      "count": 1
+    }
+  ],
+  "top_style_categories": [
+    {
+      "value": "luxury",
+      "count": 7
+    },
+    {
+      "value": "elegant",
+      "count": 6
+    },
+    {
+      "value": "cool-girl",
+      "count": 5
+    },
+    {
+      "value": "sweet",
+      "count": 5
+    },
+    {
+      "value": "minimal",
+      "count": 1
+    },
+    {
+      "value": "daily",
+      "count": 1
+    }
+  ],
+  "top_patterns": [
+    {
+      "value": "mixed",
+      "count": 15
+    },
+    {
+      "value": "solid",
+      "count": 4
+    },
+    {
+      "value": "gradient",
+      "count": 3
+    },
+    {
+      "value": "checkerboard",
+      "count": 1
+    },
+    {
+      "value": "metallic-detail",
+      "count": 1
+    },
+    {
+      "value": "line-art",
+      "count": 1
+    }
+  ],
+  "top_finishes": [
+    {
+      "value": "glossy",
+      "count": 25
+    }
+  ],
+  "top_occasions": [
+    {
+      "value": "party",
+      "count": 8
+    },
+    {
+      "value": "wedding",
+      "count": 6
+    },
+    {
+      "value": "dating",
+      "count": 4
+    },
+    {
+      "value": "festival",
+      "count": 3
+    },
+    {
+      "value": "commute",
+      "count": 2
+    },
+    {
+      "value": "daily",
+      "count": 2
+    }
+  ],
+  "top_personas": [
+    {
+      "value": "fashion-lover",
+      "count": 6
+    },
+    {
+      "value": "young-professional",
+      "count": 5
+    },
+    {
+      "value": "student",
+      "count": 4
+    },
+    {
+      "value": "luxury-seeker",
+      "count": 3
+    },
+    {
+      "value": "trend-follower",
+      "count": 3
+    },
+    {
+      "value": "bridal-user",
+      "count": 3
+    },
+    {
+      "value": "minimalist",
+      "count": 1
+    }
+  ],
+  "label_status": {
+    "draft": 25
+  },
+  "color_style_matrix": {
+    "black": {
+      "cool-girl": 3,
+      "luxury": 1
+    },
+    "blue": {
+      "cool-girl": 1,
+      "luxury": 1
+    },
+    "gray": {
+      "elegant": 1
+    },
+    "green": {
+      "elegant": 1
+    },
+    "nude": {
+      "luxury": 3,
+      "elegant": 2,
+      "cool-girl": 1,
+      "daily": 1,
+      "sweet": 1
+    },
+    "pink": {
+      "sweet": 3,
+      "elegant": 1
+    },
+    "red": {
+      "luxury": 1,
+      "sweet": 1
+    },
+    "white": {
+      "elegant": 1,
+      "luxury": 1,
+      "minimal": 1
+    }
+  },
+  "persona_recommendations": {
+    "minimalist": [
+      "style_01: minimal | clean, white, office"
+    ],
+    "young-professional": [
+      "style_02: elegant | olive, contrast, elegant",
+      "style_04: elegant | greige, silver, minimalist",
+      "style_10: sweet | pink, blush, soft",
+      "style_13: elegant | pink-nude, line, elegant"
+    ],
+    "fashion-lover": [
+      "style_03: luxury | rose, dark, statement",
+      "style_07: cool-girl | animal-print, silver, edgy",
+      "style_08: cool-girl | black, chrome, sharp",
+      "style_12: cool-girl | black, green, luxe"
+    ],
+    "student": [
+      "style_05: daily | checkerboard, nude, playful",
+      "style_15: sweet | cute, charm, colorful",
+      "style_18: sweet | cartoon, colorful, cute",
+      "style_25: sweet | red, heart, cute"
+    ],
+    "luxury-seeker": [
+      "style_06: luxury | crystal, gold, luxury",
+      "style_19: luxury | champagne, crystal, luxe",
+      "style_20: luxury | chrome, crystal, silver"
+    ],
+    "trend-follower": [
+      "style_09: cool-girl | black, star, glam",
+      "style_16: sweet | floral, pink, festive",
+      "style_21: cool-girl | blue, playful, accent"
+    ],
+    "bridal-user": [
+      "style_11: elegant | pearl, bridal, reflective",
+      "style_14: elegant | milky-white, clean, bridal",
+      "style_17: luxury | transparent, crystal, bridal"
+    ]
+  },
+  "takeaways": [
+    "1. The current style set is heavily concentrated in glossy premium-oriented designs; this supports luxury and party recommendations first.",
+    "2. Short daily-safe styles exist, but they are underrepresented compared with long decorative styles; this is a useful inventory balancing insight.",
+    "3. Student, fashion-lover, young-professional, and bridal-user are the clearest initial persona buckets for recommendation and campaign copy.",
+    "4. Red/pink/nude/white dominate the palette; black and metallic silver/gold act as stronger accent clusters for trend campaigns.",
+    "5. Wedding, party, dating, and commute are the most reusable occasion axes for early-stage operations segmentation."
+  ]
+}

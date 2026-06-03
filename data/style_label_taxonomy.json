@@ -1,0 +1,147 @@
+{
+  "primary_color": [
+    "red",
+    "pink",
+    "nude",
+    "white",
+    "black",
+    "gray",
+    "silver",
+    "gold",
+    "blue",
+    "green",
+    "purple",
+    "brown",
+    "orange",
+    "multicolor"
+  ],
+  "secondary_color": [
+    "none",
+    "red",
+    "pink",
+    "nude",
+    "white",
+    "black",
+    "gray",
+    "silver",
+    "gold",
+    "blue",
+    "green",
+    "purple",
+    "brown",
+    "orange",
+    "multicolor"
+  ],
+  "accent_color": [
+    "none",
+    "red",
+    "pink",
+    "nude",
+    "white",
+    "black",
+    "gray",
+    "silver",
+    "gold",
+    "blue",
+    "green",
+    "purple",
+    "brown",
+    "orange",
+    "multicolor"
+  ],
+  "style_category": [
+    "minimal",
+    "french",
+    "sweet",
+    "cool-girl",
+    "luxury",
+    "elegant",
+    "daily",
+    "party",
+    "street",
+    "bridal",
+    "festival",
+    "retro"
+  ],
+  "pattern": [
+    "solid",
+    "gradient",
+    "french-tip",
+    "checkerboard",
+    "line-art",
+    "glitter",
+    "cat-eye",
+    "mirror",
+    "marble",
+    "floral",
+    "metallic-detail",
+    "mixed"
+  ],
+  "finish": [
+    "glossy",
+    "matte",
+    "glitter",
+    "shimmer",
+    "mirror",
+    "jelly",
+    "velvet",
+    "mixed"
+  ],
+  "length": [
+    "short",
+    "medium",
+    "long"
+  ],
+  "shape": [
+    "round",
+    "oval",
+    "square",
+    "squoval",
+    "almond",
+    "stiletto",
+    "coffin",
+    "mixed"
+  ],
+  "complexity": [
+    "low",
+    "medium",
+    "high"
+  ],
+  "season": [
+    "all-season",
+    "spring",
+    "summer",
+    "autumn",
+    "winter"
+  ],
+  "occasion": [
+    "commute",
+    "dating",
+    "party",
+    "wedding",
+    "festival",
+    "vacation",
+    "daily",
+    "photo-shoot"
+  ],
+  "target_persona": [
+    "student",
+    "young-professional",
+    "fashion-lover",
+    "bridal-user",
+    "party-user",
+    "minimalist",
+    "luxury-seeker",
+    "trend-follower"
+  ],
+  "price_band": [
+    "budget",
+    "mid",
+    "premium"
+  ],
+  "label_status": [
+    "todo",
+    "draft",
+    "reviewed"
+  ]
+}

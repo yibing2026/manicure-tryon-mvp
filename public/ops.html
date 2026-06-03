@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>美甲智能运营 Copilot</title>
+    <link rel="stylesheet" href="./ops.css" />
+  </head>
+  <body>
+    <main class="ops-app">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-mark">AI</span>
+          <div>
+            <h1>智能运营 Copilot</h1>
+            <p>美甲款式推荐与活动策略演示</p>
+          </div>
+        </div>
+
+        <nav class="preset-list" aria-label="运营场景">
+          <button class="preset active" data-preset="dating">
+            <span>约会转化</span>
+            <small>年轻职场女性 · 试戴优先</small>
+          </button>
+          <button class="preset" data-preset="party">
+            <span>派对上新</span>
+            <small>潮流用户 · 首屏曝光</small>
+          </button>
+          <button class="preset" data-preset="wedding">
+            <span>婚礼专题</span>
+            <small>新娘用户 · 高客单推荐</small>
+          </button>
+          <button class="preset" data-preset="festival">
+            <span>节日种草</span>
+            <small>学生用户 · 收藏扩散</small>
+          </button>
+        </nav>
+
+        <a class="tryon-link" href="./index.html">返回试戴 MVP</a>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Rule-based demo</p>
+            <h2>输入运营目标，实时生成款式策略</h2>
+          </div>
+          <div class="topbar-actions">
+            <button id="resetPreset" class="secondary" type="button">重置当前场景</button>
+            <button id="runCopilot" type="button">生成策略</button>
+          </div>
+        </header>
+
+        <section class="grid">
+          <form class="input-panel" id="opsForm">
+            <section class="form-section">
+              <div class="section-title">
+                <h3>活动上下文</h3>
+                <span id="scenarioTag">homepage_banner</span>
+              </div>
+              <label>
+                活动目标
+                <input id="objective" type="text" />
+              </label>
+              <div class="two-col">
+                <label>
+                  投放渠道
+                  <select id="channel">
+                    <option value="homepage_banner">首页 Banner</option>
+                    <option value="recommendation_row">推荐首排</option>
+                    <option value="push_notification">Push 通知</option>
+                    <option value="topic_page">专题页</option>
+                  </select>
+                </label>
+                <label>
+                  预算等级
+                  <select id="budgetLevel">
+                    <option value="low">低</option>
+                    <option value="medium">中</option>
+                    <option value="high">高</option>
+                  </select>
+                </label>
+              </div>
+              <label>
+                转化阶段
+                <select id="targetStage">
+                  <option value="try_on">试戴</option>
+                  <option value="save">收藏</option>
+                  <option value="purchase">购买</option>
+                </select>
+              </label>
+            </section>
+
+            <section class="form-section">
+              <div class="section-title">
+                <h3>目标用户</h3>
+                <span>persona</span>
+              </div>
+              <div class="two-col">
+                <label>
+                  人群
+                  <select id="persona">
+                    <option value="young-professional">young-professional</option>
+                    <option value="fashion-lover">fashion-lover</option>
+                    <option value="bridal-user">bridal-user</option>
+                    <option value="student">student</option>
+                    <option value="trend-follower">trend-follower</option>
+                    <option value="luxury-seeker">luxury-seeker</option>
+                    <option value="minimalist">minimalist</option>
+                  </select>
+                </label>
+                <label>
+                  场景
+                  <select id="occasion">
+                    <option value="dating">dating</option>
+                    <option value="party">party</option>
+                    <option value="wedding">wedding</option>
+                    <option value="festival">festival</option>
+                    <option value="commute">commute</option>
+                    <option value="daily">daily</option>
+                  </select>
+                </label>
+              </div>
+              <label>
+                偏好颜色，用逗号分隔
+                <input id="preferredColors" type="text" />
+              </label>
+              <label>
+                风格偏好，用逗号分隔
+                <input id="stylePreference" type="text" />
+              </label>
+              <label>
+                价格敏感度
+                <select id="priceSensitivity">
+                  <option value="low">低</option>
+                  <option value="mid">中</option>
+                  <option value="high">高</option>
+                </select>
+              </label>
+            </section>
+
+            <section class="form-section">
+              <div class="section-title">
+                <h3>库存与策略</h3>
+                <span>inventory</span>
+              </div>
+              <label>
+                候选款式 ID，用逗号分隔
+                <textarea id="candidateStyles" rows="4"></textarea>
+              </label>
+              <label>
+                优先趋势簇
+                <select id="priorityCluster">
+                  <option value="">不指定</option>
+                  <option value="premium_party_gloss">premium_party_gloss</option>
+                  <option value="bridal_elegant_clean">bridal_elegant_clean</option>
+                  <option value="cute_youth_festival">cute_youth_festival</option>
+                </select>
+              </label>
+              <label>
+                运营目标
+                <textarea id="operatorGoal" rows="3"></textarea>
+              </label>
+            </section>
+          </form>
+
+          <section class="result-panel" aria-live="polite">
+            <div class="status-line">
+              <span id="statusDot" class="status-dot"></span>
+              <p id="runStatus">等待生成策略</p>
+            </div>
+
+            <section class="result-section">
+              <div class="section-title">
+                <h3>推荐款式</h3>
+                <span id="recommendationCount">0 styles</span>
+              </div>
+              <div id="recommendedStyles" class="recommendation-list empty">
+                <p>点击“生成策略”后展示 Top 款式、匹配分和推荐理由。</p>
+              </div>
+            </section>
+
+            <section class="result-section">
+              <div class="section-title">
+                <h3>活动文案</h3>
+                <span>message</span>
+              </div>
+              <div class="message-box">
+                <strong id="headline">暂无文案</strong>
+                <p id="subheadline">策略生成后会自动填充。</p>
+                <button id="ctaPreview" class="cta-preview" type="button" disabled>CTA</button>
+              </div>
+            </section>
+
+            <section class="result-section split">
+              <div>
+                <div class="section-title">
+                  <h3>运营动作</h3>
+                  <span>actions</span>
+                </div>
+                <ol id="operatorActions" class="action-list"></ol>
+              </div>
+              <div>
+                <div class="section-title">
+                  <h3>风险提示</h3>
+                  <span>risk</span>
+                </div>
+                <ul id="riskNotes" class="risk-list"></ul>
+              </div>
+            </section>
+
+            <section class="result-section">
+              <div class="section-title">
+                <h3>策略摘要</h3>
+                <span>summary</span>
+              </div>
+              <p id="strategySummary" class="summary-text">暂无摘要。</p>
+            </section>
+
+            <details class="raw-json">
+              <summary>查看接口返回 JSON</summary>
+              <pre id="rawResponse">{}</pre>
+            </details>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script type="module" src="./ops.js"></script>
+  </body>
+</html>

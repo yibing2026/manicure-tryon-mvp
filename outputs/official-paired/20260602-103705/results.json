@@ -1,0 +1,20 @@
+{
+  "workbook": "D:\\Manicure\\命题三美甲评测数据（对外版）.xlsx",
+  "provider": "doubao",
+  "endpoint": "http://localhost:3000/api/generate-tryon",
+  "pairCount": 1,
+  "selectedPairs": [
+    "hand_04_style_04"
+  ],
+  "qualityRetryAttempts": 2,
+  "retryPreset": "alignment",
+  "requestRetries": 2,
+  "results": [
+    {
+      "pair": "hand_04_style_04",
+      "status": "failed",
+      "error": "Failed to reach the local MVP server. Start `npm start` in D:\\MVP first.",
+      "elapsedSeconds": 17.44
+    }
+  ]
+}

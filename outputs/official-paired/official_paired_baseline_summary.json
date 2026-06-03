@@ -1,0 +1,11 @@
+{
+  "baseline_run_dir": "D:\\MVP\\outputs\\official-paired\\20260601-201746",
+  "official_pair_count": 13,
+  "generated_count": 13,
+  "missing_pairs": [],
+  "status": "complete",
+  "notes": [
+    "The official paired baseline set is complete: 13 of 13 paired samples generated.",
+    "Later retry runs exist for selected bad cases, but the baseline complete set remains 20260601-201746."
+  ]
+}

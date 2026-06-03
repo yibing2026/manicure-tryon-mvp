@@ -1,0 +1,67 @@
+{
+  "workbook": "D:\\Manicure\\命题三美甲评测数据（对外版）.xlsx",
+  "provider": "doubao",
+  "endpoint": "http://localhost:3000/api/generate-tryon",
+  "pairCount": 1,
+  "selectedPairs": [
+    "hand_03_style_03"
+  ],
+  "qualityRetryAttempts": 2,
+  "retryPreset": "alignment",
+  "requestRetries": 2,
+  "results": [
+    {
+      "pair": "hand_03_style_03",
+      "status": "success",
+      "output": "outputs\\official-paired\\20260601-205656\\hand_03_style_03.png",
+      "attempts": [
+        {
+          "attempt": 0,
+          "output": "outputs\\official-paired\\20260601-205656\\hand_03_style_03.png",
+          "prompt": "",
+          "provider": "doubao",
+          "model": "doubao-seedream-5-0-260128@250828",
+          "providerDebug": {
+            "model": "doubao-seedream-5-0-260128",
+            "version": "250828",
+            "size": "2K",
+            "response_format": "url",
+            "reference_images_count": 3,
+            "field_used": "image"
+          }
+        },
+        {
+          "attempt": 1,
+          "output": "outputs\\official-paired\\20260601-205656\\hand_03_style_03.retry_1.png",
+          "prompt": "Strictly align the manicure within the natural nail boundaries. Keep every design fully attached to the visible nail bed, with clean cuticle alignment and no floating, drifting, or spill onto the skin.",
+          "provider": "doubao",
+          "model": "doubao-seedream-5-0-260128@250828",
+          "providerDebug": {
+            "model": "doubao-seedream-5-0-260128",
+            "version": "250828",
+            "size": "2K",
+            "response_format": "url",
+            "reference_images_count": 3,
+            "field_used": "image"
+          }
+        },
+        {
+          "attempt": 2,
+          "output": "outputs\\official-paired\\20260601-205656\\hand_03_style_03.retry_2.png",
+          "prompt": "Re-check nail placement on every visible finger. The manicure must sit flush on top of the original nail bed with centered geometry, consistent length, and realistic side-wall boundaries.",
+          "provider": "doubao",
+          "model": "doubao-seedream-5-0-260128@250828",
+          "providerDebug": {
+            "model": "doubao-seedream-5-0-260128",
+            "version": "250828",
+            "size": "2K",
+            "response_format": "url",
+            "reference_images_count": 3,
+            "field_used": "image"
+          }
+        }
+      ],
+      "elapsedSeconds": 127.36
+    }
+  ]
+}
