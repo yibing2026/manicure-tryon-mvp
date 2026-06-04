@@ -68,7 +68,7 @@ flowchart TD
 | 款式标签体系 | 已完成 | 对官方款式做运营标签初稿 |
 | 运营 Copilot | 已完成 | `POST /api/ops-copilot-demo`，输出推荐和运营策略 |
 | API 调用日志 | 已完成 | 记录 requestId、provider、模型、耗时、失败原因和重试信息 |
-| 自动质检模块 | 规划中 | 计划加入覆盖度、偏移、结构保真、风格一致性评分 |
+| 自动质检模块 v1 | 已完成 | 规则评估输出存在性、尺寸、文件大小、场景漂移和重试候选 |
 
 ## 本地运行
 
@@ -176,6 +176,17 @@ npm run analyze:styles
 npm run strategy:ops
 ```
 
+生成试戴结果质量评估报告：
+
+```bash
+npm run evaluate:tryon
+```
+
+输出：
+
+- `analysis/tryon_quality_v1/tryon_quality_report.json`
+- `analysis/tryon_quality_v1/tryon_quality_report.md`
+
 ## 关键产物
 
 - 试戴前端：[public/index.html](public/index.html)
@@ -184,6 +195,7 @@ npm run strategy:ops
 - 批量生成脚本：[scripts/batch_generate_official_pairs.py](scripts/batch_generate_official_pairs.py)
 - 款式标签草稿：[data/official_style_label_draft_v1.csv](data/official_style_label_draft_v1.csv)
 - 运营策略规则：[analysis/ops_strategy_v1/ops_strategy_rules_v1.md](analysis/ops_strategy_v1/ops_strategy_rules_v1.md)
+- 试戴质检报告：[analysis/tryon_quality_v1/tryon_quality_report.md](analysis/tryon_quality_v1/tryon_quality_report.md)
 - Copilot 说明：[analysis/ops_copilot_v1/README.md](analysis/ops_copilot_v1/README.md)
 - 官方样例输出：[outputs/official-paired](outputs/official-paired)
 - 比赛提交说明：[比赛提交说明.md](比赛提交说明.md)
@@ -206,10 +218,9 @@ npm run strategy:ops
 
 ## 后续路线图
 
-1. **自动质检 v1**：先做规则版质量评分，包括输出存在性、尺寸异常、颜色偏移、结构保真等。
-2. **Agent 闭环**：把生成、质检、重试、归档、运营建议串成一个端到端工作流。
-3. **在线 Demo / 录屏**：部署稳定版本，并准备 1-2 分钟项目演示视频。
-4. **LLM Copilot 升级**：在保留规则可解释性的基础上，用 LLM 生成更自然的策略文案。
+1. **Agent 闭环**：把生成、质检、重试、归档、运营建议串成一个端到端工作流。
+2. **在线 Demo / 录屏**：部署稳定版本，并准备 1-2 分钟项目演示视频。
+3. **LLM Copilot 升级**：在保留规则可解释性的基础上，用 LLM 生成更自然的策略文案。
 
 ## 设计取舍
 
