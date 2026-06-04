@@ -1,6 +1,7 @@
 import { createReadStream, readFileSync } from "node:fs";
-import { access, stat } from "node:fs/promises";
+import { access, appendFile, mkdir, stat } from "node:fs/promises";
 import { execFile } from "node:child_process";
+import { createHash, randomUUID } from "node:crypto";
 import http from "node:http";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
@@ -27,6 +28,10 @@ const opsStrategyRulesPath = path.join(
   "analysis",
   "ops_strategy_v1",
   "ops_strategy_rules_v1.json",
+);
+const apiCallLogPath = path.resolve(
+  __dirname,
+  process.env.API_CALL_LOG_PATH || "logs/api-calls.jsonl",
 );
 
 const mimeTypes = {
@@ -547,6 +552,86 @@ function previewText(value, maxLength = 320) {
   return text.length > maxLength ? `${text.slice(0, maxLength)}...` : text;
 }
 
+function hashText(value) {
+  return createHash("sha256").update(String(value || "")).digest("hex");
+}
+
+function summarizeImageSource(source) {
+  const text = typeof source === "string" ? source : "";
+  if (!text) {
+    return {
+      kind: "missing",
+      length: 0,
+      sha256: hashText(""),
+    };
+  }
+
+  if (text.startsWith("data:")) {
+    const [header = "", payload = ""] = text.split(",", 2);
+    return {
+      kind: "data-url",
+      mimeType: header.match(/^data:([^;]+)/)?.[1] || "unknown",
+      length: text.length,
+      payloadLength: payload.length,
+      sha256: hashText(text),
+    };
+  }
+
+  try {
+    const url = new URL(text);
+    return {
+      kind: "url",
+      host: url.host,
+      pathname: url.pathname,
+      length: text.length,
+      sha256: hashText(text),
+    };
+  } catch {
+    return {
+      kind: "inline-or-local",
+      length: text.length,
+      sha256: hashText(text),
+    };
+  }
+}
+
+function summarizeAsset(asset) {
+  return {
+    inputType: asset.type,
+    mimeType: asset.mimeType,
+    bytes: asset.buffer.length,
+    filename: asset.filename,
+    sourceKind: summarizeImageSource(asset.source).kind,
+  };
+}
+
+function getTryOnModelName(provider) {
+  if (provider === "doubao") {
+    const config = getDoubaoModelConfig();
+    return `${config.model}${config.version ? `@${config.version}` : ""}`;
+  }
+
+  return process.env.OPENAI_IMAGE_MODEL || "gpt-image-1";
+}
+
+async function appendApiCallLog(entry) {
+  const payload = {
+    schemaVersion: 1,
+    timestamp: new Date().toISOString(),
+    ...entry,
+  };
+
+  try {
+    await mkdir(path.dirname(apiCallLogPath), { recursive: true });
+    await appendFile(apiCallLogPath, `${JSON.stringify(payload)}\n`, "utf8");
+  } catch (error) {
+    console.warn(
+      "Failed to write API call log:",
+      error instanceof Error ? error.message : error,
+    );
+  }
+}
+
 function buildHttpError(prefix, response, payload) {
   const detail =
     payload?.error?.message ||
@@ -760,21 +845,71 @@ async function callDoubaoTryOn({ prompt, handAsset, styleAsset, guideAsset }) {
 }
 
 async function handleTryOnGeneration(req, res) {
+  const requestId = randomUUID();
+  const startedAt = Date.now();
+  let logEntry = {
+    requestId,
+    route: "/api/generate-tryon",
+    method: req.method,
+  };
+
   try {
     const body = await readJsonBody(req);
     const provider = body.provider === "doubao" ? "doubao" : "openai";
+    const prompt = buildTryOnPrompt(body.prompt);
+
+    logEntry = {
+      ...logEntry,
+      provider,
+      requestedModel: getTryOnModelName(provider),
+      prompt: {
+        hasCustomPrompt: Boolean(body.prompt?.trim()),
+        sha256: hashText(prompt),
+        preview: previewText(prompt, 260),
+      },
+      retry: {
+        attempt:
+          typeof body.retryAttempt === "number" ? body.retryAttempt : null,
+        preset:
+          typeof body.retryPreset === "string" ? body.retryPreset : null,
+      },
+      inputSources: {
+        handImage: summarizeImageSource(body.handImage),
+        styleImage: summarizeImageSource(body.styleImage),
+        guideImage: summarizeImageSource(body.guideImage),
+      },
+    };
 
     const handAsset = await imageSourceToAsset(body.handImage, "hand-image");
     const styleAsset = await imageSourceToAsset(body.styleImage, "style-image");
     const guideAsset = await imageSourceToAsset(body.guideImage, "guide-image");
-    const prompt = buildTryOnPrompt(body.prompt);
+
+    logEntry.inputAssets = {
+      handImage: summarizeAsset(handAsset),
+      styleImage: summarizeAsset(styleAsset),
+      guideImage: summarizeAsset(guideAsset),
+    };
 
     const result =
       provider === "doubao"
         ? await callDoubaoTryOn({ prompt, handAsset, styleAsset, guideAsset })
         : await callOpenAiTryOn({ prompt, handAsset, styleAsset, guideAsset });
 
+    await appendApiCallLog({
+      ...logEntry,
+      status: "success",
+      durationMs: Date.now() - startedAt,
+      response: {
+        model: result.model,
+        hasImageDataUrl: Boolean(result.imageDataUrl),
+        imageDataUrlLength: result.imageDataUrl?.length || 0,
+        usage: result.raw?.usage || null,
+        providerDebug: result.requestBodyPreview || null,
+      },
+    });
+
     sendJson(res, 200, {
+      requestId,
       provider,
       model: result.model,
       promptUsed: prompt,
@@ -783,7 +918,17 @@ async function handleTryOnGeneration(req, res) {
       providerDebug: result.requestBodyPreview || null,
     });
   } catch (error) {
+    await appendApiCallLog({
+      ...logEntry,
+      status: "error",
+      durationMs: Date.now() - startedAt,
+      error: {
+        message: error instanceof Error ? error.message : "Generation failed",
+      },
+    });
+
     sendJson(res, 500, {
+      requestId,
       error: error instanceof Error ? error.message : "Generation failed",
     });
   }

@@ -67,8 +67,8 @@ flowchart TD
 | 质量重试 prompt | 已完成 | 支持 alignment、style、mixed 三类重试预设 |
 | 款式标签体系 | 已完成 | 对官方款式做运营标签初稿 |
 | 运营 Copilot | 已完成 | `POST /api/ops-copilot-demo`，输出推荐和运营策略 |
+| API 调用日志 | 已完成 | 记录 requestId、provider、模型、耗时、失败原因和重试信息 |
 | 自动质检模块 | 规划中 | 计划加入覆盖度、偏移、结构保真、风格一致性评分 |
-| 调用日志系统 | 规划中 | 计划记录 provider、prompt、耗时、失败原因和重试次数 |
 
 ## 本地运行
 
@@ -107,6 +107,7 @@ ARK_API_KEY=
 DOUBAO_API_KEY=
 DOUBAO_IMAGE_MODEL=
 DOUBAO_IMAGE_VERSION=
+API_CALL_LOG_PATH=logs/api-calls.jsonl
 ```
 
 官方样例加载需要配置评测表路径：
@@ -117,6 +118,25 @@ OFFICIAL_SAMPLES_PYTHON=python
 ```
 
 安全说明：`.env.local` 已在 `.gitignore` 中排除，不应提交到 GitHub。
+
+## API 调用日志
+
+每次调用 `POST /api/generate-tryon` 都会写入一条 JSONL 日志：
+
+```bash
+logs/api-calls.jsonl
+```
+
+日志会记录：
+
+- `requestId`：单次请求 ID，前端响应和服务端日志可对齐。
+- `provider` / `requestedModel`：本次使用的服务商和模型。
+- `durationMs` / `status`：耗时与成功或失败状态。
+- `retry.attempt` / `retry.preset`：是否为批量生成中的质量重试。
+- `inputSources` / `inputAssets`：输入图片来源类型、尺寸和哈希摘要。
+- `error.message`：失败原因，便于定位模型权限、网络或参数问题。
+
+日志不会写入 API Key，也不会保存图片 base64 原文；`logs/` 目录已被 `.gitignore` 排除。
 
 ## 常用脚本
 
@@ -186,11 +206,10 @@ npm run strategy:ops
 
 ## 后续路线图
 
-1. **API 调用日志**：记录 provider、模型、prompt 摘要、耗时、失败原因、重试次数。
-2. **自动质检 v1**：先做规则版质量评分，包括输出存在性、尺寸异常、颜色偏移、结构保真等。
-3. **Agent 闭环**：把生成、质检、重试、归档、运营建议串成一个端到端工作流。
-4. **在线 Demo / 录屏**：部署稳定版本，并准备 1-2 分钟项目演示视频。
-5. **LLM Copilot 升级**：在保留规则可解释性的基础上，用 LLM 生成更自然的策略文案。
+1. **自动质检 v1**：先做规则版质量评分，包括输出存在性、尺寸异常、颜色偏移、结构保真等。
+2. **Agent 闭环**：把生成、质检、重试、归档、运营建议串成一个端到端工作流。
+3. **在线 Demo / 录屏**：部署稳定版本，并准备 1-2 分钟项目演示视频。
+4. **LLM Copilot 升级**：在保留规则可解释性的基础上，用 LLM 生成更自然的策略文案。
 
 ## 设计取舍
 

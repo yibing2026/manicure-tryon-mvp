@@ -393,6 +393,8 @@ def main() -> int:
                     "styleImage": pair.style_url,
                     "guideImage": guide_data_url,
                     "prompt": prompt,
+                    "retryAttempt": attempt_index,
+                    "retryPreset": args.retry_preset if attempt_index else None,
                 }
 
                 response = request_generation_with_retries(
@@ -417,6 +419,7 @@ def main() -> int:
                         "prompt": prompt,
                         "provider": response.get("provider"),
                         "model": response.get("model"),
+                        "requestId": response.get("requestId"),
                         "providerDebug": response.get("providerDebug"),
                     }
                 )

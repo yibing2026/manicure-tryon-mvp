@@ -504,16 +504,18 @@ async function generateTryOn() {
     const result = await response.json();
 
     if (!response.ok) {
-      throw new Error(result.error || "生成失败");
+      const error = new Error(result.error || "生成失败");
+      error.requestId = result.requestId;
+      throw error;
     }
 
     updateGeneratedPreview(
       result.imageDataUrl,
-      `已通过 ${result.provider} / ${result.model} 生成正式试戴图。${formatProviderDebug(result.providerDebug)}`,
+      `已通过 ${result.provider} / ${result.model} 生成正式试戴图。请求 ID：${result.requestId || "未返回"}。${formatProviderDebug(result.providerDebug)}`,
     );
     setStatus("正式试戴图生成完成。");
   } catch (error) {
-    updateGeneratedPreview("", "正式试戴图生成失败。");
+    updateGeneratedPreview("", `正式试戴图生成失败。${error.requestId ? `请求 ID：${error.requestId}。` : ""}`);
     setStatus(`接口调用失败：${error.message}`);
   } finally {
     elements.generateTryOn.disabled = false;
