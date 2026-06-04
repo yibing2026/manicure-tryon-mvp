@@ -1,0 +1,203 @@
+{
+  "workflowVersion": "v1",
+  "mode": "safe_existing_outputs",
+  "qualitySummary": {
+    "manifest": "D:\\MVP\\outputs\\official-paired\\20260601-201746\\results.json",
+    "totalCandidates": 13,
+    "averageScore": 98.46,
+    "decisions": {
+      "pass": 11,
+      "review": 2,
+      "fail": 0
+    },
+    "workbookWarning": null,
+    "reviewPairs": [
+      {
+        "pair": "hand_01_style_01",
+        "attempt": 0,
+        "score": 90,
+        "decision": "review",
+        "reasons": [],
+        "warnings": [
+          "nail_region_change_review"
+        ]
+      },
+      {
+        "pair": "hand_10_style_10",
+        "attempt": 0,
+        "score": 90,
+        "decision": "review",
+        "reasons": [],
+        "warnings": [
+          "nail_region_change_review"
+        ]
+      }
+    ]
+  },
+  "retryPlan": [
+    {
+      "pair": "hand_01_style_01",
+      "decision": "review",
+      "score": 90,
+      "retryPreset": "style",
+      "suggestedCommand": "python scripts/batch_generate_official_pairs.py --pairs hand_01_style_01 --quality-retry-attempts 2 --retry-preset style --overwrite",
+      "signals": {
+        "reasons": [],
+        "warnings": [
+          "nail_region_change_review"
+        ]
+      }
+    },
+    {
+      "pair": "hand_10_style_10",
+      "decision": "review",
+      "score": 90,
+      "retryPreset": "style",
+      "suggestedCommand": "python scripts/batch_generate_official_pairs.py --pairs hand_10_style_10 --quality-retry-attempts 2 --retry-preset style --overwrite",
+      "signals": {
+        "reasons": [],
+        "warnings": [
+          "nail_region_change_review"
+        ]
+      }
+    }
+  ],
+  "opsActions": {
+    "readyForRecommendationCount": 11,
+    "heldForQualityReviewCount": 2,
+    "topReadyStyles": [
+      {
+        "pair": "hand_13_style_13",
+        "styleId": "style_13",
+        "styleCategory": "elegant",
+        "occasion": "wedding",
+        "targetPersona": "young-professional",
+        "trendKeywords": "pink-nude, line, elegant",
+        "score": 100
+      },
+      {
+        "pair": "hand_12_style_12",
+        "styleId": "style_12",
+        "styleCategory": "cool-girl",
+        "occasion": "party",
+        "targetPersona": "fashion-lover",
+        "trendKeywords": "black, green, luxe",
+        "score": 100
+      },
+      {
+        "pair": "hand_11_style_11",
+        "styleId": "style_11",
+        "styleCategory": "elegant",
+        "occasion": "wedding",
+        "targetPersona": "bridal-user",
+        "trendKeywords": "pearl, bridal, reflective",
+        "score": 100
+      },
+      {
+        "pair": "hand_09_style_09",
+        "styleId": "style_09",
+        "styleCategory": "cool-girl",
+        "occasion": "party",
+        "targetPersona": "trend-follower",
+        "trendKeywords": "black, star, glam",
+        "score": 100
+      },
+      {
+        "pair": "hand_08_style_08",
+        "styleId": "style_08",
+        "styleCategory": "cool-girl",
+        "occasion": "party",
+        "targetPersona": "fashion-lover",
+        "trendKeywords": "black, chrome, sharp",
+        "score": 100
+      }
+    ],
+    "heldStyles": [
+      {
+        "pair": "hand_01_style_01",
+        "styleId": "style_01",
+        "reason": "quality_review_required",
+        "styleCategory": "minimal",
+        "occasion": "commute",
+        "targetPersona": "minimalist"
+      },
+      {
+        "pair": "hand_10_style_10",
+        "styleId": "style_10",
+        "reason": "quality_review_required",
+        "styleCategory": "sweet",
+        "occasion": "dating",
+        "targetPersona": "young-professional"
+      }
+    ],
+    "trendSignals": {
+      "topCategories": [
+        [
+          "elegant",
+          4
+        ],
+        [
+          "cool-girl",
+          4
+        ],
+        [
+          "luxury",
+          2
+        ],
+        [
+          "daily",
+          1
+        ]
+      ],
+      "topOccasions": [
+        [
+          "party",
+          5
+        ],
+        [
+          "wedding",
+          3
+        ],
+        [
+          "dating",
+          1
+        ],
+        [
+          "commute",
+          1
+        ],
+        [
+          "daily",
+          1
+        ]
+      ],
+      "topPersonas": [
+        [
+          "fashion-lover",
+          4
+        ],
+        [
+          "young-professional",
+          3
+        ],
+        [
+          "student",
+          1
+        ],
+        [
+          "luxury-seeker",
+          1
+        ],
+        [
+          "trend-follower",
+          1
+        ]
+      ]
+    },
+    "operatorActions": [
+      "Move pass candidates into the demo gallery or recommendation pool.",
+      "Hold review/fail candidates until retry candidates are generated and re-evaluated.",
+      "Use the top category/persona signals to prepare campaign copy for the operations page."
+    ]
+  }
+}

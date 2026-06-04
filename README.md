@@ -69,6 +69,7 @@ flowchart TD
 | 运营 Copilot | 已完成 | `POST /api/ops-copilot-demo`，输出推荐和运营策略 |
 | API 调用日志 | 已完成 | 记录 requestId、provider、模型、耗时、失败原因和重试信息 |
 | 自动质检模块 v1 | 已完成 | 规则评估输出存在性、尺寸、文件大小、场景漂移和重试候选 |
+| Agent Workflow v1 | 已完成 | 复用已有结果，自动串联质检、重试计划、归档摘要和运营动作 |
 
 ## 本地运行
 
@@ -187,6 +188,17 @@ npm run evaluate:tryon
 - `analysis/tryon_quality_v1/tryon_quality_report.json`
 - `analysis/tryon_quality_v1/tryon_quality_report.md`
 
+运行安全版 Agent Workflow：
+
+```bash
+npm run workflow:tryon
+```
+
+输出：
+
+- `analysis/tryon_agent_workflow_v1/tryon_agent_workflow.json`
+- `analysis/tryon_agent_workflow_v1/tryon_agent_workflow.md`
+
 ## 关键产物
 
 - 试戴前端：[public/index.html](public/index.html)
@@ -196,6 +208,7 @@ npm run evaluate:tryon
 - 款式标签草稿：[data/official_style_label_draft_v1.csv](data/official_style_label_draft_v1.csv)
 - 运营策略规则：[analysis/ops_strategy_v1/ops_strategy_rules_v1.md](analysis/ops_strategy_v1/ops_strategy_rules_v1.md)
 - 试戴质检报告：[analysis/tryon_quality_v1/tryon_quality_report.md](analysis/tryon_quality_v1/tryon_quality_report.md)
+- Agent Workflow 报告：[analysis/tryon_agent_workflow_v1/tryon_agent_workflow.md](analysis/tryon_agent_workflow_v1/tryon_agent_workflow.md)
 - Copilot 说明：[analysis/ops_copilot_v1/README.md](analysis/ops_copilot_v1/README.md)
 - 官方样例输出：[outputs/official-paired](outputs/official-paired)
 - 比赛提交说明：[比赛提交说明.md](比赛提交说明.md)
@@ -218,7 +231,7 @@ npm run evaluate:tryon
 
 ## 后续路线图
 
-1. **Agent 闭环**：把生成、质检、重试、归档、运营建议串成一个端到端工作流。
+1. **自动执行重试**：在人工确认预算后，让 Workflow 自动执行重试命令并重新评估。
 2. **在线 Demo / 录屏**：部署稳定版本，并准备 1-2 分钟项目演示视频。
 3. **LLM Copilot 升级**：在保留规则可解释性的基础上，用 LLM 生成更自然的策略文案。
 
