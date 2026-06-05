@@ -131,6 +131,97 @@ function fitCanvasToImage(image) {
   syncControlsFromState();
 }
 
+function estimateUserTraitsFromHandImage() {
+  if (!state.handImage) {
+    return null;
+  }
+
+  const sampleCanvas = document.createElement("canvas");
+  const sampleSize = 96;
+  sampleCanvas.width = sampleSize;
+  sampleCanvas.height = sampleSize;
+  const sampleCtx = sampleCanvas.getContext("2d", { willReadFrequently: true });
+  sampleCtx.drawImage(state.handImage, 0, 0, sampleSize, sampleSize);
+  const pixels = sampleCtx.getImageData(0, 0, sampleSize, sampleSize).data;
+  const skinLikePixels = [];
+
+  for (let index = 0; index < pixels.length; index += 4) {
+    const r = pixels[index];
+    const g = pixels[index + 1];
+    const b = pixels[index + 2];
+    const max = Math.max(r, g, b);
+    const min = Math.min(r, g, b);
+    const brightness = (r + g + b) / 3;
+
+    if (
+      r > 70 &&
+      g > 45 &&
+      b > 35 &&
+      r >= g * 0.9 &&
+      g >= b * 0.75 &&
+      max - min > 12 &&
+      brightness > 80
+    ) {
+      skinLikePixels.push({ r, g, b, brightness });
+    }
+  }
+
+  const sample = skinLikePixels.length ? skinLikePixels : [{ r: 190, g: 150, b: 125, brightness: 155 }];
+  const avg = sample.reduce(
+    (acc, pixel) => ({
+      r: acc.r + pixel.r,
+      g: acc.g + pixel.g,
+      b: acc.b + pixel.b,
+      brightness: acc.brightness + pixel.brightness,
+    }),
+    { r: 0, g: 0, b: 0, brightness: 0 },
+  );
+  avg.r /= sample.length;
+  avg.g /= sample.length;
+  avg.b /= sample.length;
+  avg.brightness /= sample.length;
+
+  const warmth = avg.r - avg.b;
+  let skinTone = "medium";
+  if (avg.brightness >= 185 && warmth < 72) {
+    skinTone = "fair";
+  } else if (avg.brightness < 132) {
+    skinTone = "deep";
+  } else if (warmth >= 64 || avg.r - avg.g >= 22) {
+    skinTone = "warm";
+  }
+
+  const imageRatio = state.handImage.height / Math.max(1, state.handImage.width);
+  const estimatedNailSpread = Math.abs(baseLayout[4].x - baseLayout[0].x);
+  let handShape = "small";
+  if (imageRatio >= 1.42) {
+    handShape = "slender";
+  } else if (imageRatio <= 1.05 || estimatedNailSpread >= 0.58) {
+    handShape = "short-wide";
+  } else if (imageRatio >= 1.25) {
+    handShape = "long";
+  }
+
+  return {
+    skinTone,
+    handShape,
+    confidence: skinLikePixels.length >= 400 ? "medium" : "low",
+    sampleCount: skinLikePixels.length,
+  };
+}
+
+function applyEstimatedUserTraits(sourceLabel = "手图") {
+  const traits = estimateUserTraitsFromHandImage();
+  if (!traits) {
+    return;
+  }
+
+  elements.skinTone.value = traits.skinTone;
+  elements.handShape.value = traits.handShape;
+  elements.recommendationMeta.textContent =
+    `${sourceLabel}已加载，已自动估计肤色=${traits.skinTone}、手型=${traits.handShape}（${traits.confidence} 置信度，可手动修正）。`;
+}
+
 async function readFileAsDataUrl(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -287,6 +378,7 @@ async function handleFileUpload(input, key, successText) {
 
     if (key === "handImage") {
       fitCanvasToImage(image);
+      applyEstimatedUserTraits("手图");
     }
 
     drawScene();
@@ -317,6 +409,7 @@ async function handleUrlLoad(field, key, successText) {
 
     if (key === "handImage") {
       fitCanvasToImage(image);
+      applyEstimatedUserTraits("手图 URL");
     }
 
     drawScene();
@@ -341,6 +434,7 @@ async function loadImagesIntoState(handSource, styleSource, successText) {
     state.styleSource = styleSource;
 
     fitCanvasToImage(handImage);
+    applyEstimatedUserTraits("官方手图");
     drawScene();
     setStatus(successText);
   } catch (error) {
@@ -489,7 +583,11 @@ async function fetchUserRecommendations() {
     const result = await response.json();
 
     if (!response.ok) {
-      throw new Error(result.error || "推荐失败");
+      const message =
+        response.status === 404
+          ? "推荐接口不存在，请重启本地后端服务后刷新页面。"
+          : result.error || "推荐失败";
+      throw new Error(message);
     }
 
     renderRecommendations(result.recommendations || []);
@@ -527,6 +625,7 @@ async function loadRecommendedStyle(styleId) {
       state.handImage = handImage;
       state.handSource = handSample.handUrl;
       fitCanvasToImage(handImage);
+      applyEstimatedUserTraits("官方手图");
     }
 
     drawScene();
