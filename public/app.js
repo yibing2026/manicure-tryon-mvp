@@ -329,6 +329,65 @@ function drawSelectionRing(nail) {
   ctx.restore();
 }
 
+function buildGuideImageDataUrl() {
+  if (!state.handImage) {
+    return canvas.toDataURL("image/png");
+  }
+
+  const guideCanvas = document.createElement("canvas");
+  guideCanvas.width = canvas.width;
+  guideCanvas.height = canvas.height;
+  const guideCtx = guideCanvas.getContext("2d");
+  guideCtx.drawImage(state.handImage, 0, 0, guideCanvas.width, guideCanvas.height);
+
+  // Build the placement guide on a hidden canvas so the visible UI stays clean.
+  state.nails.forEach((nail) => {
+    guideCtx.save();
+    guideCtx.translate(nail.x, nail.y);
+    guideCtx.rotate((nail.rotation * Math.PI) / 180);
+    guideCtx.filter = `blur(${state.feather}px)`;
+    guideCtx.beginPath();
+    guideCtx.ellipse(0, 0, nail.w / 2, nail.h / 2, 0, 0, Math.PI * 2);
+    guideCtx.clip();
+
+    if (state.styleImage) {
+      guideCtx.globalAlpha = state.overlayOpacity;
+      const sourceRatio = state.styleImage.width / state.styleImage.height;
+      const targetRatio = nail.w / nail.h;
+      let drawWidth = nail.w;
+      let drawHeight = nail.h;
+      let drawX = -nail.w / 2;
+      let drawY = -nail.h / 2;
+
+      if (sourceRatio > targetRatio) {
+        drawHeight = nail.h;
+        drawWidth = drawHeight * sourceRatio;
+        drawX = -drawWidth / 2;
+      } else {
+        drawWidth = nail.w;
+        drawHeight = drawWidth / sourceRatio;
+        drawY = -drawHeight / 2;
+      }
+
+      guideCtx.drawImage(state.styleImage, drawX, drawY, drawWidth, drawHeight);
+    } else {
+      guideCtx.globalAlpha = state.overlayOpacity;
+      guideCtx.fillStyle = "rgba(197, 92, 59, 0.78)";
+      guideCtx.fill();
+    }
+
+    guideCtx.filter = "none";
+    guideCtx.globalAlpha = state.shineStrength;
+    guideCtx.fillStyle = "#ffffff";
+    guideCtx.beginPath();
+    guideCtx.ellipse(-nail.w * 0.1, -nail.h * 0.18, nail.w * 0.13, nail.h * 0.3, 0, 0, Math.PI * 2);
+    guideCtx.fill();
+    guideCtx.restore();
+  });
+
+  return guideCanvas.toDataURL("image/png");
+}
+
 function drawScene() {
   if (!state.handImage) {
     drawPlaceholder();
@@ -337,11 +396,6 @@ function drawScene() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(state.handImage, 0, 0, canvas.width, canvas.height);
-
-  if (!state.suppressStyleOverlay) {
-    state.nails.forEach((nail) => drawNailTexture(nail));
-    drawSelectionRing(state.nails[state.activeNail]);
-  }
 }
 
 function selectNailFromPoint(x, y) {
@@ -759,7 +813,7 @@ async function generateTryOn(options = {}) {
     provider: elements.provider.value,
     handImage: state.handSource,
     styleImage: state.styleSource,
-    guideImage: canvas.toDataURL("image/png"),
+    guideImage: buildGuideImageDataUrl(),
     prompt: elements.customPrompt.value.trim(),
   };
 
