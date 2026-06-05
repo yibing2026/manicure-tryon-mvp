@@ -63,6 +63,7 @@ flowchart TD
 | 试戴页面 | 已完成 | 上传手图、款式图，调整指甲位置，生成画布预览 |
 | AI 生成接口 | 已完成 | `POST /api/generate-tryon`，支持 OpenAI 和豆包/火山方舟 |
 | 官方样例加载 | 已完成 | `GET /api/official-samples`，读取官方评测表 URL |
+| 用户个性化推荐 | 已完成 | `POST /api/user-style-recommendations`，基于用户画像推荐 Top 5 款式并支持一键试戴 |
 | 批量生成脚本 | 已完成 | 按官方手图-款式配对生成结果图 |
 | 质量重试 prompt | 已完成 | 支持 alignment、style、mixed 三类重试预设 |
 | 款式标签体系 | 已完成 | 对官方款式做运营标签初稿 |
@@ -139,6 +140,23 @@ logs/api-calls.jsonl
 
 日志不会写入 API Key，也不会保存图片 base64 原文；`logs/` 目录已被 `.gitignore` 排除。
 
+## 用户个性化推荐
+
+试戴页包含一个轻量推荐模块，用户可以选择肤色、手型、场景、偏好风格、甲长和预算，后端接口会返回推荐款式 Top 5：
+
+```text
+POST /api/user-style-recommendations
+```
+
+推荐依据：
+
+- 官方款式标签：颜色、风格、场景、人群、价格带、趋势关键词。
+- Mock 热度数据：[data/mock_style_popularity.json](data/mock_style_popularity.json)。
+- 试戴质检结果：[analysis/tryon_quality_v1/tryon_quality_report.json](analysis/tryon_quality_v1/tryon_quality_report.json)。
+- 用户画像：肤色、手型、甲长偏好、使用场景、预算和风格偏好。
+
+注意：当前热度数据是 mock 数据，用于验证推荐闭环；正式上线后应替换为真实曝光、点击、收藏、试戴、预约和成交数据。
+
 ## 常用脚本
 
 批量生成官方配对样例：
@@ -205,6 +223,7 @@ npm run workflow:tryon
 - 运营前端：[public/ops.html](public/ops.html)
 - 后端服务：[server.mjs](server.mjs)
 - 批量生成脚本：[scripts/batch_generate_official_pairs.py](scripts/batch_generate_official_pairs.py)
+- Mock 热度数据：[data/mock_style_popularity.json](data/mock_style_popularity.json)
 - 款式标签草稿：[data/official_style_label_draft_v1.csv](data/official_style_label_draft_v1.csv)
 - 运营策略规则：[analysis/ops_strategy_v1/ops_strategy_rules_v1.md](analysis/ops_strategy_v1/ops_strategy_rules_v1.md)
 - 试戴质检报告：[analysis/tryon_quality_v1/tryon_quality_report.md](analysis/tryon_quality_v1/tryon_quality_report.md)

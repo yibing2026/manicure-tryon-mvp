@@ -54,6 +54,72 @@
           </div>
 
           <div class="panel-block">
+            <h2>0.5 用户个性化推荐</h2>
+            <div class="recommendation-grid">
+              <label class="input-group">
+                <span>肤色</span>
+                <select id="skinTone">
+                  <option value="medium">自然肤色</option>
+                  <option value="fair">冷白/偏白</option>
+                  <option value="warm">暖黄皮</option>
+                  <option value="deep">深肤色</option>
+                </select>
+              </label>
+              <label class="input-group">
+                <span>手型</span>
+                <select id="handShape">
+                  <option value="short-wide">短宽手</option>
+                  <option value="slender">细长手</option>
+                  <option value="small">小手</option>
+                  <option value="long">长手指</option>
+                </select>
+              </label>
+              <label class="input-group">
+                <span>场景</span>
+                <select id="userOccasion">
+                  <option value="daily">日常</option>
+                  <option value="commute">通勤</option>
+                  <option value="dating">约会</option>
+                  <option value="party">派对</option>
+                  <option value="wedding">婚礼</option>
+                  <option value="festival">节日</option>
+                </select>
+              </label>
+              <label class="input-group">
+                <span>偏好风格</span>
+                <select id="userStylePreference">
+                  <option value="daily">日常耐看</option>
+                  <option value="minimal">极简</option>
+                  <option value="elegant">优雅</option>
+                  <option value="sweet">甜美</option>
+                  <option value="luxury">华丽</option>
+                  <option value="cool-girl">酷感</option>
+                </select>
+              </label>
+              <label class="input-group">
+                <span>甲长偏好</span>
+                <select id="nailLengthPreference">
+                  <option value="short">短甲</option>
+                  <option value="medium">中等</option>
+                  <option value="long">长甲</option>
+                </select>
+              </label>
+              <label class="input-group">
+                <span>预算</span>
+                <select id="userBudget">
+                  <option value="mid">中等预算</option>
+                  <option value="premium">高预算</option>
+                </select>
+              </label>
+            </div>
+            <button id="getRecommendations">生成推荐款式</button>
+            <p id="recommendationMeta" class="status">
+              推荐基于官方款式标签、mock 热度和试戴质检结果，不使用真实用户隐私数据。
+            </p>
+            <div id="recommendationsList" class="recommendations-list"></div>
+          </div>
+
+          <div class="panel-block">
             <h2>1. 导入素材</h2>
             <label class="input-group">
               <span>手图文件</span>

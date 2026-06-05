@@ -32,6 +32,15 @@ const elements = {
   loadOfficialPair: document.getElementById("loadOfficialPair"),
   refreshOfficialSamples: document.getElementById("refreshOfficialSamples"),
   officialSampleMeta: document.getElementById("officialSampleMeta"),
+  skinTone: document.getElementById("skinTone"),
+  handShape: document.getElementById("handShape"),
+  userOccasion: document.getElementById("userOccasion"),
+  userStylePreference: document.getElementById("userStylePreference"),
+  nailLengthPreference: document.getElementById("nailLengthPreference"),
+  userBudget: document.getElementById("userBudget"),
+  getRecommendations: document.getElementById("getRecommendations"),
+  recommendationMeta: document.getElementById("recommendationMeta"),
+  recommendationsList: document.getElementById("recommendationsList"),
 };
 
 const nailNames = ["拇指", "食指", "中指", "无名指", "小指"];
@@ -58,6 +67,7 @@ const state = {
     handSamples: [],
     styleSamples: [],
   },
+  recommendations: [],
 };
 
 function createNails(width, height) {
@@ -392,6 +402,15 @@ function formatProviderDebug(debugInfo) {
   return parts.length ? ` (${parts.join(", ")})` : "";
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
 function populateOfficialSelects() {
   const handOptions = state.officialSamples.handSamples
     .map(
@@ -410,6 +429,111 @@ function populateOfficialSelects() {
     handOptions || '<option value="">无可用手图样例</option>';
   elements.officialStyleSelect.innerHTML =
     styleOptions || '<option value="">无可用款式样例</option>';
+}
+
+function renderRecommendations(recommendations) {
+  state.recommendations = recommendations;
+  if (!recommendations.length) {
+    elements.recommendationsList.innerHTML =
+      '<p class="status">暂无推荐结果，请调整画像后重试。</p>';
+    return;
+  }
+
+  elements.recommendationsList.innerHTML = recommendations
+    .map((item, index) => {
+      const reasons = (item.reasons || []).slice(0, 3);
+      const risks = item.risks || [];
+      return `
+        <article class="recommendation-card">
+          <div class="recommendation-rank">Top ${index + 1}</div>
+          <div>
+            <h3>${escapeHtml(item.style_id)} · ${escapeHtml(item.style_profile?.style_category || "style")}</h3>
+            <p class="recommendation-score">推荐分 ${item.score} / 99 · 热度 ${item.popularity?.hotness_score ?? "mock"}</p>
+          </div>
+          ${item.style_image_url ? `<img src="/proxy-image?url=${encodeURIComponent(item.style_image_url)}" alt="${escapeHtml(item.style_id)} 款式图" />` : ""}
+          <ul>
+            ${reasons.map((reason) => `<li>${escapeHtml(reason)}</li>`).join("")}
+          </ul>
+          ${risks.length ? `<p class="recommendation-risk">${escapeHtml(risks[0])}</p>` : ""}
+          <button class="secondary load-recommendation" data-style-id="${escapeHtml(item.style_id)}">
+            加载该款式试戴
+          </button>
+        </article>
+      `;
+    })
+    .join("");
+}
+
+async function fetchUserRecommendations() {
+  elements.getRecommendations.disabled = true;
+  elements.recommendationMeta.textContent = "正在根据用户画像生成推荐...";
+
+  const payload = {
+    skinTone: elements.skinTone.value,
+    handShape: elements.handShape.value,
+    occasion: elements.userOccasion.value,
+    stylePreference: elements.userStylePreference.value,
+    nailLengthPreference: elements.nailLengthPreference.value,
+    budget: elements.userBudget.value,
+    topN: 5,
+  };
+
+  try {
+    const response = await fetch("/api/user-style-recommendations", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "推荐失败");
+    }
+
+    renderRecommendations(result.recommendations || []);
+    elements.recommendationMeta.textContent =
+      "已生成推荐：依据官方款式标签、mock 热度、肤色/手型适配和试戴质检结果。";
+  } catch (error) {
+    elements.recommendationMeta.textContent = `推荐失败：${error.message}`;
+  } finally {
+    elements.getRecommendations.disabled = false;
+  }
+}
+
+async function loadRecommendedStyle(styleId) {
+  const recommendation = state.recommendations.find((item) => item.style_id === styleId);
+  if (!recommendation?.style_image_url) {
+    setStatus("推荐款式缺少可加载的款式图 URL。");
+    return;
+  }
+
+  setStatus(`正在加载推荐款式 ${styleId}...`);
+
+  try {
+    const styleImage = await loadRemoteViaProxy(recommendation.style_image_url);
+    state.styleImage = styleImage;
+    state.styleSource = recommendation.style_image_url;
+
+    if (!state.handImage) {
+      const handIndex = Number(elements.officialHandSelect.value || 0);
+      const handSample = state.officialSamples.handSamples[handIndex];
+      if (!handSample?.handUrl) {
+        setStatus("请先上传或加载一张手图，再使用推荐款式试戴。");
+        return;
+      }
+      const handImage = await loadRemoteViaProxy(handSample.handUrl);
+      state.handImage = handImage;
+      state.handSource = handSample.handUrl;
+      fitCanvasToImage(handImage);
+    }
+
+    drawScene();
+    setStatus(`已加载推荐款式 ${styleId}，可以继续微调或生成正式试戴图。`);
+  } catch (error) {
+    setStatus(`推荐款式加载失败：${error.message}`);
+  }
 }
 
 function syncStyleSelectToHandSelection() {
@@ -547,6 +671,14 @@ function bindEvents() {
   elements.loadOfficialPair.addEventListener("click", loadOfficialPair);
   elements.refreshOfficialSamples.addEventListener("click", fetchOfficialSamples);
   elements.officialHandSelect.addEventListener("change", syncStyleSelectToHandSelection);
+  elements.getRecommendations.addEventListener("click", fetchUserRecommendations);
+  elements.recommendationsList.addEventListener("click", (event) => {
+    const button = event.target.closest(".load-recommendation");
+    if (!button) {
+      return;
+    }
+    loadRecommendedStyle(button.dataset.styleId);
+  });
 
   elements.opacity.addEventListener("input", () => {
     state.overlayOpacity = Number(elements.opacity.value) / 100;

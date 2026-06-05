@@ -29,6 +29,17 @@ const opsStrategyRulesPath = path.join(
   "ops_strategy_v1",
   "ops_strategy_rules_v1.json",
 );
+const tryonQualityReportPath = path.join(
+  __dirname,
+  "analysis",
+  "tryon_quality_v1",
+  "tryon_quality_report.json",
+);
+const mockStylePopularityPath = path.join(
+  __dirname,
+  "data",
+  "mock_style_popularity.json",
+);
 const apiCallLogPath = path.resolve(
   __dirname,
   process.env.API_CALL_LOG_PATH || "logs/api-calls.jsonl",
@@ -137,6 +148,8 @@ function getPythonCommand() {
 
 let officialSamplesCache = null;
 let opsStrategyRulesCache = null;
+let tryonQualityCache = null;
+let stylePopularityCache = null;
 
 function parseJsonFile(filePath) {
   return JSON.parse(readFileSync(filePath, "utf8"));
@@ -167,6 +180,42 @@ function loadOpsStrategyRules() {
 
   opsStrategyRulesCache = parseJsonFile(opsStrategyRulesPath);
   return opsStrategyRulesCache;
+}
+
+function loadTryonQualityByStyleId() {
+  if (tryonQualityCache) {
+    return tryonQualityCache;
+  }
+
+  const report = parseJsonFile(tryonQualityReportPath);
+  const qualityMap = new Map();
+  for (const record of report.records || []) {
+    if (record.styleId == null) {
+      continue;
+    }
+    const styleId = `style_${String(record.styleId).padStart(2, "0")}`;
+    qualityMap.set(styleId, {
+      decision: record.decision,
+      score: record.score,
+      warnings: record.warnings || [],
+      reasons: record.reasons || [],
+    });
+  }
+
+  tryonQualityCache = qualityMap;
+  return tryonQualityCache;
+}
+
+function loadStylePopularityById() {
+  if (stylePopularityCache) {
+    return stylePopularityCache;
+  }
+
+  const payload = parseJsonFile(mockStylePopularityPath);
+  stylePopularityCache = new Map(
+    (payload.styles || []).map((style) => [style.style_id, style]),
+  );
+  return stylePopularityCache;
 }
 
 function normalizeString(value) {
@@ -266,6 +315,133 @@ function scoreStyle({
   return {
     score: Math.min(99, score),
     reasons,
+  };
+}
+
+function colorFitsSkinTone(color, skinTone) {
+  const tone = normalizeString(skinTone);
+  const normalizedColor = normalizeString(color);
+  const fitMap = {
+    fair: ["pink", "nude", "red", "black", "gray"],
+    warm: ["nude", "gold", "green", "red", "orange", "brown"],
+    medium: ["nude", "green", "pink", "gray", "silver", "black"],
+    deep: ["gold", "white", "red", "black", "green", "silver"],
+  };
+  return (fitMap[tone] || []).includes(normalizedColor);
+}
+
+function styleFitsHandShape(style, handShape, nailLengthPreference) {
+  const shape = normalizeString(handShape);
+  const lengthPreference = normalizeString(nailLengthPreference);
+  const length = normalizeString(style.length);
+  const category = normalizeString(style.style_category);
+  const nailShape = normalizeString(style.shape);
+
+  if (shape === "short-wide") {
+    return (
+      ["short", "medium"].includes(length) ||
+      ["round", "squoval"].includes(nailShape) ||
+      ["minimal", "daily"].includes(category)
+    );
+  }
+
+  if (shape === "slender") {
+    return ["medium", "long"].includes(length) || ["almond"].includes(nailShape);
+  }
+
+  if (shape === "small") {
+    return ["short", "medium"].includes(length) || ["minimal", "sweet"].includes(category);
+  }
+
+  if (shape === "long") {
+    return ["medium", "long"].includes(length) || ["luxury", "cool-girl"].includes(category);
+  }
+
+  return lengthPreference ? length === lengthPreference : true;
+}
+
+function getQualityAdjustment(quality) {
+  if (!quality) {
+    return {
+      score: 0,
+      reason: "暂无试戴质检记录",
+      risk: "该款式尚未进入官方配对质检集，建议生成后再进入主推位。",
+    };
+  }
+
+  if (quality.decision === "pass") {
+    return {
+      score: 8,
+      reason: "试戴质检通过",
+      risk: "",
+    };
+  }
+
+  if (quality.decision === "review") {
+    return {
+      score: -12,
+      reason: "试戴质检建议复查",
+      risk: "该款式试戴图进入 review 队列，推荐前建议重新生成或人工确认。",
+    };
+  }
+
+  return {
+    score: -30,
+    reason: "试戴质检未通过",
+    risk: "该款式暂不建议进入用户推荐池。",
+  };
+}
+
+function buildUserRecommendationScore({
+  style,
+  popularity,
+  quality,
+  profile,
+}) {
+  let score = 20;
+  const reasons = [];
+  const risks = [];
+  const hotnessScore = Number(popularity?.hotness_score || 50);
+
+  score += hotnessScore * 0.25;
+  reasons.push(`近期热度 ${Math.round(hotnessScore)}/100`);
+
+  if (normalizeString(profile.occasion) === normalizeString(style.occasion)) {
+    score += 16;
+    reasons.push(`适合${profile.occasion}场景`);
+  }
+
+  if (normalizeString(profile.stylePreference) === normalizeString(style.style_category)) {
+    score += 14;
+    reasons.push(`符合${profile.stylePreference}风格偏好`);
+  }
+
+  if (colorFitsSkinTone(style.primary_color, profile.skinTone)) {
+    score += 10;
+    reasons.push(`主色 ${style.primary_color} 与${profile.skinTone}肤色适配`);
+  }
+
+  if (styleFitsHandShape(style, profile.handShape, profile.nailLengthPreference)) {
+    score += 8;
+    reasons.push(`适合${profile.handShape}手型或${profile.nailLengthPreference}甲长偏好`);
+  }
+
+  if (normalizeString(profile.budget) === normalizeString(style.price_band)) {
+    score += 6;
+    reasons.push(`符合${profile.budget}预算带`);
+  }
+
+  const qualityAdjustment = getQualityAdjustment(quality);
+  score += qualityAdjustment.score;
+  reasons.push(qualityAdjustment.reason);
+  if (qualityAdjustment.risk) {
+    risks.push(qualityAdjustment.risk);
+  }
+
+  return {
+    score: Math.max(0, Math.min(99, Math.round(score))),
+    reasons,
+    risks,
   };
 }
 
@@ -482,6 +658,105 @@ async function handleOpsCopilotDemo(req, res) {
   } catch (error) {
     sendJson(res, 500, {
       error: error instanceof Error ? error.message : "Ops copilot demo failed",
+    });
+  }
+}
+
+async function handleUserStyleRecommendations(req, res) {
+  try {
+    const body = await readJsonBody(req);
+    const profile = {
+      skinTone: normalizeString(body.skinTone) || "medium",
+      handShape: normalizeString(body.handShape) || "short-wide",
+      nailLengthPreference: normalizeString(body.nailLengthPreference) || "short",
+      occasion: normalizeString(body.occasion) || "daily",
+      stylePreference: normalizeString(body.stylePreference) || "daily",
+      budget: normalizeString(body.budget) || "mid",
+    };
+    const topN = Math.max(1, Math.min(10, Number(body.topN || 5)));
+    const rules = loadOpsStrategyRules();
+    const allStyles = [...mapStylesById(rules).values()];
+    const popularityById = loadStylePopularityById();
+    const qualityById = loadTryonQualityByStyleId();
+    const samples = await loadOfficialSamples();
+
+    const styleSamplesById = new Map(
+      (samples.styleSamples || []).map((sample) => [
+        `style_${String(sample.id).padStart(2, "0")}`,
+        sample,
+      ]),
+    );
+
+    const recommendations = allStyles
+      .map((style) => {
+        const popularity = popularityById.get(style.style_id) || null;
+        const quality = qualityById.get(style.style_id) || null;
+        const scored = buildUserRecommendationScore({
+          style,
+          popularity,
+          quality,
+          profile,
+        });
+        const sample = styleSamplesById.get(style.style_id) || null;
+
+        return {
+          style_id: style.style_id,
+          style_sample_id: sample?.id || null,
+          score: scored.score,
+          reasons: scored.reasons,
+          risks: scored.risks,
+          style_image_url:
+            sample?.enhancedStyleUrl || sample?.originalStyleUrl || "",
+          style_profile: {
+            primary_color: style.primary_color,
+            style_category: style.style_category,
+            occasion: style.occasion,
+            target_persona: style.target_persona,
+            price_band: style.price_band,
+            trend_keywords: style.trend_keywords,
+          },
+          popularity: popularity
+            ? {
+                hotness_score: popularity.hotness_score,
+                views: popularity.views,
+                tryons: popularity.tryons,
+                favorites: popularity.favorites,
+                bookings: popularity.bookings,
+                recent_growth: popularity.recent_growth,
+              }
+            : null,
+          tryon_quality: quality || {
+            decision: "unknown",
+            score: null,
+            warnings: ["quality_not_available"],
+            reasons: [],
+          },
+        };
+      })
+      .sort((left, right) => right.score - left.score)
+      .slice(0, topN);
+
+    sendJson(res, 200, {
+      source_note:
+        "Recommendations use official style labels, mock popularity signals, and local try-on quality reports. Mock popularity should be replaced with real user behavior data later.",
+      profile,
+      recommendations,
+      scoring_weights: {
+        mock_hotness: "25%",
+        occasion_match: "16 points",
+        style_preference: "14 points",
+        skin_tone_fit: "10 points",
+        hand_shape_fit: "8 points",
+        budget_fit: "6 points",
+        tryon_quality: "+8 / -12 / -30 points",
+      },
+    });
+  } catch (error) {
+    sendJson(res, 500, {
+      error:
+        error instanceof Error
+          ? error.message
+          : "User style recommendation failed",
     });
   }
 }
@@ -1088,6 +1363,11 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === "POST" && reqUrl.pathname === "/api/ops-copilot-demo") {
     await handleOpsCopilotDemo(req, res);
+    return;
+  }
+
+  if (req.method === "POST" && reqUrl.pathname === "/api/user-style-recommendations") {
+    await handleUserStyleRecommendations(req, res);
     return;
   }
 

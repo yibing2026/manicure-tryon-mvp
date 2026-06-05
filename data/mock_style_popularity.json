@@ -1,0 +1,32 @@
+{
+  "source": "mock",
+  "description": "Synthetic popularity signals for MVP recommendation testing. Replace with real exposure, try-on, favorite, booking, and order events in production.",
+  "updated_at": "2026-06-05",
+  "styles": [
+    { "style_id": "style_01", "views": 860, "tryons": 210, "favorites": 46, "bookings": 9, "recent_growth": 0.08, "hotness_score": 74 },
+    { "style_id": "style_02", "views": 920, "tryons": 238, "favorites": 58, "bookings": 13, "recent_growth": 0.16, "hotness_score": 82 },
+    { "style_id": "style_03", "views": 1180, "tryons": 312, "favorites": 91, "bookings": 21, "recent_growth": 0.24, "hotness_score": 94 },
+    { "style_id": "style_04", "views": 760, "tryons": 188, "favorites": 42, "bookings": 11, "recent_growth": 0.07, "hotness_score": 69 },
+    { "style_id": "style_05", "views": 830, "tryons": 205, "favorites": 49, "bookings": 10, "recent_growth": 0.11, "hotness_score": 73 },
+    { "style_id": "style_06", "views": 1040, "tryons": 276, "favorites": 83, "bookings": 19, "recent_growth": 0.18, "hotness_score": 89 },
+    { "style_id": "style_07", "views": 980, "tryons": 244, "favorites": 76, "bookings": 16, "recent_growth": 0.21, "hotness_score": 87 },
+    { "style_id": "style_08", "views": 1080, "tryons": 290, "favorites": 88, "bookings": 18, "recent_growth": 0.26, "hotness_score": 92 },
+    { "style_id": "style_09", "views": 990, "tryons": 268, "favorites": 79, "bookings": 17, "recent_growth": 0.22, "hotness_score": 88 },
+    { "style_id": "style_10", "views": 890, "tryons": 230, "favorites": 62, "bookings": 14, "recent_growth": 0.19, "hotness_score": 84 },
+    { "style_id": "style_11", "views": 1010, "tryons": 248, "favorites": 86, "bookings": 22, "recent_growth": 0.15, "hotness_score": 90 },
+    { "style_id": "style_12", "views": 1130, "tryons": 301, "favorites": 96, "bookings": 20, "recent_growth": 0.28, "hotness_score": 95 },
+    { "style_id": "style_13", "views": 930, "tryons": 236, "favorites": 70, "bookings": 15, "recent_growth": 0.17, "hotness_score": 85 },
+    { "style_id": "style_14", "views": 640, "tryons": 154, "favorites": 33, "bookings": 6, "recent_growth": 0.04, "hotness_score": 58 },
+    { "style_id": "style_15", "views": 780, "tryons": 196, "favorites": 44, "bookings": 8, "recent_growth": 0.10, "hotness_score": 68 },
+    { "style_id": "style_16", "views": 870, "tryons": 217, "favorites": 61, "bookings": 12, "recent_growth": 0.18, "hotness_score": 80 },
+    { "style_id": "style_17", "views": 720, "tryons": 166, "favorites": 38, "bookings": 7, "recent_growth": 0.06, "hotness_score": 63 },
+    { "style_id": "style_18", "views": 810, "tryons": 202, "favorites": 55, "bookings": 10, "recent_growth": 0.12, "hotness_score": 75 },
+    { "style_id": "style_19", "views": 960, "tryons": 251, "favorites": 74, "bookings": 16, "recent_growth": 0.20, "hotness_score": 86 },
+    { "style_id": "style_20", "views": 700, "tryons": 158, "favorites": 31, "bookings": 6, "recent_growth": 0.05, "hotness_score": 60 },
+    { "style_id": "style_21", "views": 910, "tryons": 222, "favorites": 68, "bookings": 13, "recent_growth": 0.18, "hotness_score": 83 },
+    { "style_id": "style_22", "views": 840, "tryons": 213, "favorites": 59, "bookings": 11, "recent_growth": 0.14, "hotness_score": 78 },
+    { "style_id": "style_23", "views": 790, "tryons": 183, "favorites": 47, "bookings": 8, "recent_growth": 0.09, "hotness_score": 70 },
+    { "style_id": "style_24", "views": 1030, "tryons": 270, "favorites": 84, "bookings": 18, "recent_growth": 0.23, "hotness_score": 91 },
+    { "style_id": "style_25", "views": 750, "tryons": 175, "favorites": 40, "bookings": 7, "recent_growth": 0.07, "hotness_score": 65 }
+  ]
+}

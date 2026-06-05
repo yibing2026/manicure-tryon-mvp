@@ -195,6 +195,71 @@ button.secondary {
   gap: 10px;
 }
 
+.recommendation-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.recommendations-list {
+  display: grid;
+  gap: 12px;
+}
+
+.recommendation-card {
+  display: grid;
+  gap: 10px;
+  padding: 14px;
+  border: 1px solid rgba(112, 75, 54, 0.14);
+  border-radius: 18px;
+  background: rgba(255, 252, 247, 0.74);
+}
+
+.recommendation-card h3,
+.recommendation-card p {
+  margin: 0;
+}
+
+.recommendation-card img {
+  width: 100%;
+  max-height: 120px;
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid rgba(112, 75, 54, 0.12);
+}
+
+.recommendation-card ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.recommendation-rank {
+  width: fit-content;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: rgba(197, 92, 59, 0.12);
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.recommendation-score {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.recommendation-risk {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(197, 92, 59, 0.08);
+  color: #8a3f2a;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .preview {
   display: grid;
   gap: 16px;
@@ -307,6 +372,10 @@ canvas {
   }
 
   .button-row {
+    grid-template-columns: 1fr;
+  }
+
+  .recommendation-grid {
     grid-template-columns: 1fr;
   }
 }
