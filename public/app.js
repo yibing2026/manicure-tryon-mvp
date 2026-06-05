@@ -549,9 +549,14 @@ function renderRecommendations(recommendations) {
             ${reasons.map((reason) => `<li>${escapeHtml(reason)}</li>`).join("")}
           </ul>
           ${risks.length ? `<p class="recommendation-risk">${escapeHtml(risks[0])}</p>` : ""}
-          <button class="secondary load-recommendation" data-style-id="${escapeHtml(item.style_id)}">
-            加载该款式试戴
-          </button>
+          <div class="recommendation-actions">
+            <button class="secondary load-recommendation" data-style-id="${escapeHtml(item.style_id)}">
+              加载预览
+            </button>
+            <button class="generate-recommendation" data-style-id="${escapeHtml(item.style_id)}">
+              豆包生成试戴图
+            </button>
+          </div>
         </article>
       `;
     })
@@ -635,6 +640,45 @@ async function loadRecommendedStyle(styleId) {
   }
 }
 
+async function generateRecommendedTryOn(styleId) {
+  const recommendation = state.recommendations.find((item) => item.style_id === styleId);
+  if (!recommendation) {
+    setStatus("没有找到该推荐款式，请重新生成推荐。");
+    return;
+  }
+
+  await loadRecommendedStyle(styleId);
+
+  if (!state.handSource || !state.styleSource) {
+    setStatus("请先准备手图和推荐款式图，再调用豆包生成。");
+    return;
+  }
+
+  const originalPrompt = elements.customPrompt.value;
+  const originalProvider = elements.provider.value;
+  const reasonText = (recommendation.reasons || []).slice(0, 2).join("；");
+
+  elements.provider.value = "doubao";
+  elements.customPrompt.value = [
+    originalPrompt,
+    `This style was selected by the recommendation module as ${recommendation.style_id}.`,
+    reasonText ? `Recommendation reason: ${reasonText}.` : "",
+    "Please prioritize realistic nail-bed alignment and preserve the user's hand shape and skin tone.",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  try {
+    await generateTryOn({
+      statusPrefix: `正在用豆包生成推荐款式 ${styleId} 的正式试戴图...`,
+      successText: `推荐款式 ${styleId} 的豆包试戴图生成完成。`,
+    });
+  } finally {
+    elements.customPrompt.value = originalPrompt;
+    elements.provider.value = originalProvider;
+  }
+}
+
 function syncStyleSelectToHandSelection() {
   const handIndex = Number(elements.officialHandSelect.value);
   const handSample = state.officialSamples.handSamples[handIndex];
@@ -698,7 +742,7 @@ async function loadOfficialPair() {
   );
 }
 
-async function generateTryOn() {
+async function generateTryOn(options = {}) {
   if (!state.handSource || !state.styleSource) {
     setStatus("请先准备手图和款式图，再发起正式生成。");
     return;
@@ -713,7 +757,7 @@ async function generateTryOn() {
   };
 
   elements.generateTryOn.disabled = true;
-  setStatus("正在调用图像生成接口，请稍等...");
+  setStatus(options.statusPrefix || "正在调用图像生成接口，请稍等...");
   elements.generationMeta.textContent = "生成中...";
 
   try {
@@ -736,7 +780,7 @@ async function generateTryOn() {
       result.imageDataUrl,
       `已通过 ${result.provider} / ${result.model} 生成正式试戴图。请求 ID：${result.requestId || "未返回"}。${formatProviderDebug(result.providerDebug)}`,
     );
-    setStatus("正式试戴图生成完成。");
+    setStatus(options.successText || "正式试戴图生成完成。");
   } catch (error) {
     updateGeneratedPreview("", `正式试戴图生成失败。${error.requestId ? `请求 ID：${error.requestId}。` : ""}`);
     setStatus(`接口调用失败：${error.message}`);
@@ -772,11 +816,16 @@ function bindEvents() {
   elements.officialHandSelect.addEventListener("change", syncStyleSelectToHandSelection);
   elements.getRecommendations.addEventListener("click", fetchUserRecommendations);
   elements.recommendationsList.addEventListener("click", (event) => {
-    const button = event.target.closest(".load-recommendation");
-    if (!button) {
+    const loadButton = event.target.closest(".load-recommendation");
+    if (loadButton) {
+      loadRecommendedStyle(loadButton.dataset.styleId);
       return;
     }
-    loadRecommendedStyle(button.dataset.styleId);
+
+    const generateButton = event.target.closest(".generate-recommendation");
+    if (generateButton) {
+      generateRecommendedTryOn(generateButton.dataset.styleId);
+    }
   });
 
   elements.opacity.addEventListener("input", () => {
