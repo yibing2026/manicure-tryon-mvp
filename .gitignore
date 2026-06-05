@@ -24,3 +24,7 @@ yarn-error.log*
 Thumbs.db
 .vscode/
 .idea/
+
+# Local competition submission drafts
+比赛提交说明.md
+官方提交模板.md
