@@ -3,6 +3,7 @@ const $ = (id) => document.getElementById(id);
 const elements = {
   form: $("opsForm"),
   runCopilot: $("runCopilot"),
+  loadDailyReport: $("loadDailyReport"),
   resetPreset: $("resetPreset"),
   scenarioTag: $("scenarioTag"),
   objective: $("objective"),
@@ -28,6 +29,13 @@ const elements = {
   riskNotes: $("riskNotes"),
   strategySummary: $("strategySummary"),
   rawResponse: $("rawResponse"),
+  dailyReportDate: $("dailyReportDate"),
+  readyCount: $("readyCount"),
+  reviewCount: $("reviewCount"),
+  failCount: $("failCount"),
+  dailyHotStyles: $("dailyHotStyles"),
+  dailyActions: $("dailyActions"),
+  dailyRisks: $("dailyRisks"),
 };
 
 const presets = {
@@ -169,6 +177,26 @@ function renderList(container, items, tagName = "li") {
   }
 }
 
+function renderDailyReport(report) {
+  const qualityGate = report.quality_gate || {};
+  const trendInsights = report.trend_insights || {};
+
+  elements.dailyReportDate.textContent = report.date || "daily report";
+  elements.readyCount.textContent = qualityGate.ready_count ?? "-";
+  elements.reviewCount.textContent = qualityGate.review_count ?? "-";
+  elements.failCount.textContent = qualityGate.fail_count ?? "-";
+
+  renderList(
+    elements.dailyHotStyles,
+    (trendInsights.hot_styles || []).slice(0, 5).map((style) =>
+      `${style.style_id} · 热度 ${style.hotness_score} · ${style.occasion}/${style.style_category}`,
+    ),
+    "li",
+  );
+  renderList(elements.dailyActions, report.operator_actions || [], "li");
+  renderList(elements.dailyRisks, report.risk_notes || [], "li");
+}
+
 function renderRecommendations(styles) {
   elements.recommendedStyles.innerHTML = "";
   elements.recommendedStyles.classList.toggle("empty", !styles?.length);
@@ -238,6 +266,27 @@ async function runCopilot() {
   }
 }
 
+async function loadDailyReport() {
+  setStatus("正在加载运营日报...", "running");
+  elements.loadDailyReport.disabled = true;
+
+  try {
+    const response = await fetch("/api/ops-daily-report");
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.error || "运营日报加载失败");
+    }
+
+    renderDailyReport(result);
+    setStatus("运营日报已生成", "ready");
+  } catch (error) {
+    setStatus(error.message || "运营日报加载失败", "error");
+  } finally {
+    elements.loadDailyReport.disabled = false;
+  }
+}
+
 document.querySelectorAll(".preset").forEach((button) => {
   button.addEventListener("click", () => {
     applyPreset(button.dataset.preset);
@@ -250,8 +299,10 @@ elements.resetPreset.addEventListener("click", () => {
 });
 
 elements.runCopilot.addEventListener("click", runCopilot);
+elements.loadDailyReport.addEventListener("click", loadDailyReport);
 elements.channel.addEventListener("change", () => {
   elements.scenarioTag.textContent = elements.channel.value;
 });
 
 applyPreset(activePreset);
+loadDailyReport();

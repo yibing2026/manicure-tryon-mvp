@@ -47,6 +47,7 @@
           </div>
           <div class="topbar-actions">
             <button id="resetPreset" class="secondary" type="button">重置当前场景</button>
+            <button id="loadDailyReport" class="secondary" type="button">生成运营日报</button>
             <button id="runCopilot" type="button">生成策略</button>
           </div>
         </header>
@@ -169,6 +170,41 @@
               <span id="statusDot" class="status-dot"></span>
               <p id="runStatus">等待生成策略</p>
             </div>
+
+            <section class="result-section daily-report">
+              <div class="section-title">
+                <h3>运营日报</h3>
+                <span id="dailyReportDate">daily report</span>
+              </div>
+              <div class="daily-metrics">
+                <article>
+                  <strong id="readyCount">-</strong>
+                  <span>推荐池</span>
+                </article>
+                <article>
+                  <strong id="reviewCount">-</strong>
+                  <span>复查队列</span>
+                </article>
+                <article>
+                  <strong id="failCount">-</strong>
+                  <span>暂不推荐</span>
+                </article>
+              </div>
+              <div class="daily-columns">
+                <div>
+                  <h4>今日热门款式</h4>
+                  <ol id="dailyHotStyles" class="compact-list"></ol>
+                </div>
+                <div>
+                  <h4>运营动作</h4>
+                  <ol id="dailyActions" class="compact-list"></ol>
+                </div>
+              </div>
+              <div>
+                <h4>风险提示</h4>
+                <ul id="dailyRisks" class="compact-list risk-list"></ul>
+              </div>
+            </section>
 
             <section class="result-section">
               <div class="section-title">

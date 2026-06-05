@@ -71,6 +71,7 @@ flowchart TD
 | API 调用日志 | 已完成 | 记录 requestId、provider、模型、耗时、失败原因和重试信息 |
 | 自动质检模块 v1 | 已完成 | 规则评估输出存在性、尺寸、文件大小、场景漂移和重试候选 |
 | Agent Workflow v1 | 已完成 | 复用已有结果，自动串联质检、重试计划、归档摘要和运营动作 |
+| 运营日报生成 | 已完成 | 汇总 mock 热度、质检队列和 Workflow，输出趋势洞察、运营动作和风险提示 |
 
 ## 本地运行
 
@@ -217,6 +218,17 @@ npm run workflow:tryon
 - `analysis/tryon_agent_workflow_v1/tryon_agent_workflow.json`
 - `analysis/tryon_agent_workflow_v1/tryon_agent_workflow.md`
 
+生成智能运营日报：
+
+```bash
+npm run report:ops
+```
+
+输出：
+
+- `analysis/ops_daily_report_v1/ops_daily_report.json`
+- `analysis/ops_daily_report_v1/ops_daily_report.md`
+
 ## 关键产物
 
 - 试戴前端：[public/index.html](public/index.html)
@@ -228,6 +240,7 @@ npm run workflow:tryon
 - 运营策略规则：[analysis/ops_strategy_v1/ops_strategy_rules_v1.md](analysis/ops_strategy_v1/ops_strategy_rules_v1.md)
 - 试戴质检报告：[analysis/tryon_quality_v1/tryon_quality_report.md](analysis/tryon_quality_v1/tryon_quality_report.md)
 - Agent Workflow 报告：[analysis/tryon_agent_workflow_v1/tryon_agent_workflow.md](analysis/tryon_agent_workflow_v1/tryon_agent_workflow.md)
+- 运营日报：[analysis/ops_daily_report_v1/ops_daily_report.md](analysis/ops_daily_report_v1/ops_daily_report.md)
 - Copilot 说明：[analysis/ops_copilot_v1/README.md](analysis/ops_copilot_v1/README.md)
 - 官方样例输出：[outputs/official-paired](outputs/official-paired)
 - 比赛提交说明：[比赛提交说明.md](比赛提交说明.md)

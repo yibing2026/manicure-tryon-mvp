@@ -40,6 +40,12 @@ const mockStylePopularityPath = path.join(
   "data",
   "mock_style_popularity.json",
 );
+const opsDailyReportPath = path.join(
+  __dirname,
+  "analysis",
+  "ops_daily_report_v1",
+  "ops_daily_report.json",
+);
 const apiCallLogPath = path.resolve(
   __dirname,
   process.env.API_CALL_LOG_PATH || "logs/api-calls.jsonl",
@@ -761,6 +767,19 @@ async function handleUserStyleRecommendations(req, res) {
   }
 }
 
+async function handleOpsDailyReport(req, res) {
+  try {
+    sendJson(res, 200, parseJsonFile(opsDailyReportPath));
+  } catch (error) {
+    sendJson(res, 500, {
+      error:
+        error instanceof Error
+          ? `Failed to load ops daily report: ${error.message}`
+          : "Failed to load ops daily report",
+    });
+  }
+}
+
 async function imageSourceToAsset(source, fallbackName) {
   if (!source || typeof source !== "string") {
     throw new Error(`Missing image source for ${fallbackName}`);
@@ -1368,6 +1387,11 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === "POST" && reqUrl.pathname === "/api/user-style-recommendations") {
     await handleUserStyleRecommendations(req, res);
+    return;
+  }
+
+  if (req.method === "GET" && reqUrl.pathname === "/api/ops-daily-report") {
+    await handleOpsDailyReport(req, res);
     return;
   }
 

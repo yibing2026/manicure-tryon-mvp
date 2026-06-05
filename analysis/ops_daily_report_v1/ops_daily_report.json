@@ -1,0 +1,370 @@
+{
+  "date": "2026-06-05",
+  "report_version": "v1",
+  "data_scope": "official style labels + mock popularity + try-on quality report + Agent Workflow",
+  "data_sources": {
+    "style_labels": "data\\official_style_label_draft_v1.csv",
+    "mock_popularity": "data\\mock_style_popularity.json",
+    "quality_report": "analysis\\tryon_quality_v1\\tryon_quality_report.json",
+    "agent_workflow": "analysis\\tryon_agent_workflow_v1\\tryon_agent_workflow.json"
+  },
+  "trend_insights": {
+    "hot_styles": [
+      {
+        "style_id": "style_12",
+        "style_category": "cool-girl",
+        "primary_color": "black",
+        "occasion": "party",
+        "target_persona": "fashion-lover",
+        "price_band": "premium",
+        "trend_keywords": "black, green, luxe",
+        "hotness_score": 95,
+        "recent_growth": 0.28,
+        "views": 1130,
+        "tryons": 301,
+        "favorites": 96,
+        "bookings": 20,
+        "quality_decision": "pass",
+        "quality_score": 100
+      },
+      {
+        "style_id": "style_03",
+        "style_category": "luxury",
+        "primary_color": "black",
+        "occasion": "party",
+        "target_persona": "fashion-lover",
+        "price_band": "premium",
+        "trend_keywords": "rose, dark, statement",
+        "hotness_score": 94,
+        "recent_growth": 0.24,
+        "views": 1180,
+        "tryons": 312,
+        "favorites": 91,
+        "bookings": 21,
+        "quality_decision": "pass",
+        "quality_score": 100
+      },
+      {
+        "style_id": "style_08",
+        "style_category": "cool-girl",
+        "primary_color": "black",
+        "occasion": "party",
+        "target_persona": "fashion-lover",
+        "price_band": "premium",
+        "trend_keywords": "black, chrome, sharp",
+        "hotness_score": 92,
+        "recent_growth": 0.26,
+        "views": 1080,
+        "tryons": 290,
+        "favorites": 88,
+        "bookings": 18,
+        "quality_decision": "pass",
+        "quality_score": 100
+      },
+      {
+        "style_id": "style_24",
+        "style_category": "luxury",
+        "primary_color": "blue",
+        "occasion": "party",
+        "target_persona": "fashion-lover",
+        "price_band": "premium",
+        "trend_keywords": "mirror, blue, jewel",
+        "hotness_score": 91,
+        "recent_growth": 0.23,
+        "views": 1030,
+        "tryons": 270,
+        "favorites": 84,
+        "bookings": 18,
+        "quality_decision": "unknown",
+        "quality_score": null
+      },
+      {
+        "style_id": "style_11",
+        "style_category": "elegant",
+        "primary_color": "nude",
+        "occasion": "wedding",
+        "target_persona": "bridal-user",
+        "price_band": "premium",
+        "trend_keywords": "pearl, bridal, reflective",
+        "hotness_score": 90,
+        "recent_growth": 0.15,
+        "views": 1010,
+        "tryons": 248,
+        "favorites": 86,
+        "bookings": 22,
+        "quality_decision": "pass",
+        "quality_score": 100
+      }
+    ],
+    "growth_styles": [
+      {
+        "style_id": "style_12",
+        "style_category": "cool-girl",
+        "primary_color": "black",
+        "occasion": "party",
+        "target_persona": "fashion-lover",
+        "price_band": "premium",
+        "trend_keywords": "black, green, luxe",
+        "hotness_score": 95,
+        "recent_growth": 0.28,
+        "views": 1130,
+        "tryons": 301,
+        "favorites": 96,
+        "bookings": 20,
+        "quality_decision": "pass",
+        "quality_score": 100
+      },
+      {
+        "style_id": "style_08",
+        "style_category": "cool-girl",
+        "primary_color": "black",
+        "occasion": "party",
+        "target_persona": "fashion-lover",
+        "price_band": "premium",
+        "trend_keywords": "black, chrome, sharp",
+        "hotness_score": 92,
+        "recent_growth": 0.26,
+        "views": 1080,
+        "tryons": 290,
+        "favorites": 88,
+        "bookings": 18,
+        "quality_decision": "pass",
+        "quality_score": 100
+      },
+      {
+        "style_id": "style_03",
+        "style_category": "luxury",
+        "primary_color": "black",
+        "occasion": "party",
+        "target_persona": "fashion-lover",
+        "price_band": "premium",
+        "trend_keywords": "rose, dark, statement",
+        "hotness_score": 94,
+        "recent_growth": 0.24,
+        "views": 1180,
+        "tryons": 312,
+        "favorites": 91,
+        "bookings": 21,
+        "quality_decision": "pass",
+        "quality_score": 100
+      },
+      {
+        "style_id": "style_24",
+        "style_category": "luxury",
+        "primary_color": "blue",
+        "occasion": "party",
+        "target_persona": "fashion-lover",
+        "price_band": "premium",
+        "trend_keywords": "mirror, blue, jewel",
+        "hotness_score": 91,
+        "recent_growth": 0.23,
+        "views": 1030,
+        "tryons": 270,
+        "favorites": 84,
+        "bookings": 18,
+        "quality_decision": "unknown",
+        "quality_score": null
+      },
+      {
+        "style_id": "style_09",
+        "style_category": "cool-girl",
+        "primary_color": "black",
+        "occasion": "party",
+        "target_persona": "trend-follower",
+        "price_band": "premium",
+        "trend_keywords": "black, star, glam",
+        "hotness_score": 88,
+        "recent_growth": 0.22,
+        "views": 990,
+        "tryons": 268,
+        "favorites": 79,
+        "bookings": 17,
+        "quality_decision": "pass",
+        "quality_score": 100
+      }
+    ],
+    "top_categories": [
+      {
+        "name": "elegant",
+        "count": 4
+      },
+      {
+        "name": "cool-girl",
+        "count": 4
+      },
+      {
+        "name": "luxury",
+        "count": 2
+      },
+      {
+        "name": "daily",
+        "count": 1
+      }
+    ],
+    "top_occasions": [
+      {
+        "name": "party",
+        "count": 5
+      },
+      {
+        "name": "wedding",
+        "count": 3
+      },
+      {
+        "name": "dating",
+        "count": 1
+      },
+      {
+        "name": "commute",
+        "count": 1
+      },
+      {
+        "name": "daily",
+        "count": 1
+      }
+    ],
+    "top_personas": [
+      {
+        "name": "fashion-lover",
+        "count": 4
+      },
+      {
+        "name": "young-professional",
+        "count": 3
+      },
+      {
+        "name": "student",
+        "count": 1
+      },
+      {
+        "name": "luxury-seeker",
+        "count": 1
+      },
+      {
+        "name": "trend-follower",
+        "count": 1
+      }
+    ]
+  },
+  "quality_gate": {
+    "ready_count": 11,
+    "review_count": 2,
+    "fail_count": 0,
+    "review_styles": [
+      {
+        "style_id": "style_01",
+        "style_category": "minimal",
+        "primary_color": "white",
+        "occasion": "commute",
+        "target_persona": "minimalist",
+        "price_band": "mid",
+        "trend_keywords": "clean, white, office",
+        "hotness_score": 74,
+        "recent_growth": 0.08,
+        "views": 860,
+        "tryons": 210,
+        "favorites": 46,
+        "bookings": 9,
+        "quality_decision": "review",
+        "quality_score": 90
+      },
+      {
+        "style_id": "style_10",
+        "style_category": "sweet",
+        "primary_color": "pink",
+        "occasion": "dating",
+        "target_persona": "young-professional",
+        "price_band": "mid",
+        "trend_keywords": "pink, blush, soft",
+        "hotness_score": 84,
+        "recent_growth": 0.19,
+        "views": 890,
+        "tryons": 230,
+        "favorites": 62,
+        "bookings": 14,
+        "quality_decision": "review",
+        "quality_score": 90
+      }
+    ],
+    "fail_styles": []
+  },
+  "operator_actions": [
+    "将 style_12, style_03, style_08 放入今日高热推荐位。",
+    "将质检为 review 的款式先进入复查队列，生成更高质量试戴图后再主推。",
+    "围绕高频场景和风格制作首页推荐标题与专题入口。",
+    "使用运营 Copilot 对 party / wedding / dating 等高价值场景分别生成活动文案。"
+  ],
+  "risk_notes": [
+    "当前热度来自 mock 数据，仅用于 MVP 验证，不能等同真实用户行为。",
+    "质检 v1 是规则评估，仍需要人工抽检关键样例。",
+    "review 款式不建议直接进入首页主推，避免用户看到低质量试戴结果。"
+  ],
+  "execution_plan": [
+    "今日先上线 pass 且热度靠前的款式进入推荐池。",
+    "对 review 样例执行 Workflow 中建议的质量重试命令。",
+    "收集真实曝光、点击、试戴、收藏、预约数据，用于替换 mock 热度。"
+  ],
+  "workflow_snapshot": {
+    "quality_summary": {
+      "manifest": "D:\\MVP\\outputs\\official-paired\\20260601-201746\\results.json",
+      "totalCandidates": 13,
+      "averageScore": 98.46,
+      "decisions": {
+        "pass": 11,
+        "review": 2,
+        "fail": 0
+      },
+      "workbookWarning": null,
+      "reviewPairs": [
+        {
+          "pair": "hand_01_style_01",
+          "attempt": 0,
+          "score": 90,
+          "decision": "review",
+          "reasons": [],
+          "warnings": [
+            "nail_region_change_review"
+          ]
+        },
+        {
+          "pair": "hand_10_style_10",
+          "attempt": 0,
+          "score": 90,
+          "decision": "review",
+          "reasons": [],
+          "warnings": [
+            "nail_region_change_review"
+          ]
+        }
+      ]
+    },
+    "retry_plan": [
+      {
+        "pair": "hand_01_style_01",
+        "decision": "review",
+        "score": 90,
+        "retryPreset": "style",
+        "suggestedCommand": "python scripts/batch_generate_official_pairs.py --pairs hand_01_style_01 --quality-retry-attempts 2 --retry-preset style --overwrite",
+        "signals": {
+          "reasons": [],
+          "warnings": [
+            "nail_region_change_review"
+          ]
+        }
+      },
+      {
+        "pair": "hand_10_style_10",
+        "decision": "review",
+        "score": 90,
+        "retryPreset": "style",
+        "suggestedCommand": "python scripts/batch_generate_official_pairs.py --pairs hand_10_style_10 --quality-retry-attempts 2 --retry-preset style --overwrite",
+        "signals": {
+          "reasons": [],
+          "warnings": [
+            "nail_region_change_review"
+          ]
+        }
+      }
+    ]
+  }
+}

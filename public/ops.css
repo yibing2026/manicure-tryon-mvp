@@ -239,6 +239,59 @@ button:disabled {
   padding: 16px;
 }
 
+.daily-report {
+  background:
+    linear-gradient(135deg, rgba(47, 115, 86, 0.12), transparent 48%),
+    rgba(255, 255, 255, 0.9);
+}
+
+.daily-metrics {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.daily-metrics article {
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+}
+
+.daily-metrics strong {
+  color: var(--accent-strong);
+  font-size: 26px;
+  line-height: 1;
+}
+
+.daily-metrics span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.daily-columns {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.daily-report h4 {
+  margin: 0 0 8px;
+}
+
+.compact-list {
+  color: var(--muted);
+  display: grid;
+  gap: 7px;
+  font-size: 13px;
+  line-height: 1.55;
+  margin: 0;
+  padding-left: 20px;
+}
+
 .section-title {
   align-items: center;
   display: flex;
@@ -462,6 +515,8 @@ pre {
   .topbar,
   .split,
   .two-col,
+  .daily-columns,
+  .daily-metrics,
   .preset-list {
     grid-template-columns: 1fr;
   }
