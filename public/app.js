@@ -68,6 +68,7 @@ const state = {
     styleSamples: [],
   },
   recommendations: [],
+  suppressStyleOverlay: false,
 };
 
 function createNails(width, height) {
@@ -337,8 +338,10 @@ function drawScene() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.drawImage(state.handImage, 0, 0, canvas.width, canvas.height);
 
-  state.nails.forEach((nail) => drawNailTexture(nail));
-  drawSelectionRing(state.nails[state.activeNail]);
+  if (!state.suppressStyleOverlay) {
+    state.nails.forEach((nail) => drawNailTexture(nail));
+    drawSelectionRing(state.nails[state.activeNail]);
+  }
 }
 
 function selectNailFromPoint(x, y) {
@@ -374,6 +377,7 @@ async function handleFileUpload(input, key, successText) {
     }
     if (key === "styleImage") {
       state.styleSource = source;
+      state.suppressStyleOverlay = false;
     }
 
     if (key === "handImage") {
@@ -405,6 +409,7 @@ async function handleUrlLoad(field, key, successText) {
     }
     if (key === "styleImage") {
       state.styleSource = url;
+      state.suppressStyleOverlay = false;
     }
 
     if (key === "handImage") {
@@ -432,6 +437,7 @@ async function loadImagesIntoState(handSource, styleSource, successText) {
     state.styleImage = styleImage;
     state.handSource = handSource;
     state.styleSource = styleSource;
+    state.suppressStyleOverlay = false;
 
     fitCanvasToImage(handImage);
     applyEstimatedUserTraits("官方手图");
@@ -551,7 +557,7 @@ function renderRecommendations(recommendations) {
           ${risks.length ? `<p class="recommendation-risk">${escapeHtml(risks[0])}</p>` : ""}
           <div class="recommendation-actions">
             <button class="secondary load-recommendation" data-style-id="${escapeHtml(item.style_id)}">
-              加载预览
+              加载款式
             </button>
             <button class="generate-recommendation" data-style-id="${escapeHtml(item.style_id)}">
               豆包生成试戴图
@@ -618,6 +624,7 @@ async function loadRecommendedStyle(styleId) {
     const styleImage = await loadRemoteViaProxy(recommendation.style_image_url);
     state.styleImage = styleImage;
     state.styleSource = recommendation.style_image_url;
+    state.suppressStyleOverlay = true;
 
     if (!state.handImage) {
       const handIndex = Number(elements.officialHandSelect.value || 0);
@@ -634,7 +641,7 @@ async function loadRecommendedStyle(styleId) {
     }
 
     drawScene();
-    setStatus(`已加载推荐款式 ${styleId}，可以继续微调或生成正式试戴图。`);
+    setStatus(`已加载推荐款式 ${styleId}。本地粗预览已关闭，请点击“豆包生成试戴图”查看真实上手效果。`);
   } catch (error) {
     setStatus(`推荐款式加载失败：${error.message}`);
   }
