@@ -9,6 +9,7 @@
     "evaluate:tryon": "python scripts/evaluate_tryon_results.py",
     "evaluate:tryon:vlm": "python scripts/evaluate_tryon_results.py --enable-vlm",
     "workflow:tryon": "python scripts/run_tryon_agent_workflow.py",
+    "workflow:tryon:auto": "python scripts/run_tryon_agent_workflow.py --auto-retry --refresh-ops-report",
     "report:ops": "python scripts/build_ops_daily_report.py",
     "report:ops:llm": "python scripts/build_ops_daily_report.py --enable-llm",
     "analyze:agent-logs": "python scripts/analyze_agent_logs.py",

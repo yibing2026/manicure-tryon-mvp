@@ -34,18 +34,47 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Reuse the existing quality report instead of re-running evaluation.",
     )
+    parser.add_argument(
+        "--auto-retry",
+        action="store_true",
+        help="Automatically execute retry batches for non-pass candidates and re-evaluate them.",
+    )
+    parser.add_argument(
+        "--retry-attempts",
+        type=int,
+        default=2,
+        help="Retry prompt variants generated for each auto-retry batch.",
+    )
+    parser.add_argument(
+        "--refresh-ops-report",
+        action="store_true",
+        help="Rebuild the operations daily report after the final quality report is written.",
+    )
     return parser.parse_args()
 
 
 def run_quality_evaluation(manifest: str) -> None:
+    run_quality_evaluation_to_dir(manifest, str(QUALITY_REPORT_PATH.parent))
+
+
+def run_quality_evaluation_to_dir(manifest: str, output_dir: str) -> None:
     command = [sys.executable, "scripts/evaluate_tryon_results.py"]
     if manifest:
         command.extend(["--manifest", manifest])
+    if output_dir:
+        command.extend(["--output-dir", output_dir])
     subprocess.run(command, check=True)
 
 
 def load_json(path: Path) -> Dict[str, Any]:
     return json.loads(path.read_text(encoding="utf-8"))
+
+
+def parse_output_dir(stdout: str) -> Path:
+    match = re.search(r"Output directory:\s*(.+)", stdout)
+    if not match:
+        raise RuntimeError(f"Could not parse batch output directory from stdout: {stdout}")
+    return Path(match.group(1).strip())
 
 
 def parse_style_id(pair_id: str) -> int | None:
@@ -77,12 +106,16 @@ def load_style_labels(path: Path) -> Dict[str, Dict[str, str]]:
 
 def choose_retry_preset(record: Dict[str, Any]) -> str:
     signals = set(record.get("reasons", [])) | set(record.get("warnings", []))
-    if any("nail_region_change" in signal for signal in signals):
-        return "style"
-    if any("scene_drift" in signal or "aspect_ratio" in signal for signal in signals):
-        return "alignment"
-    if any("missing" in signal or "failed" in signal for signal in signals):
+    if any("output_missing" in signal or "failed" in signal for signal in signals):
         return "mixed"
+    if any("scene_drift_high" in signal or "aspect_ratio" in signal for signal in signals):
+        return "preserve"
+    if any("scene_drift_review" in signal for signal in signals):
+        return "alignment"
+    if any("nail_region_change_too_low" in signal for signal in signals):
+        return "style"
+    if any("nail_region_change_review" in signal for signal in signals):
+        return "detail"
     return "mixed"
 
 
@@ -112,6 +145,129 @@ def build_retry_plan(records: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
             }
         )
     return plan
+
+
+def run_retry_batch(preset: str, pairs: List[str], attempts: int) -> Dict[str, Any]:
+    command = [
+        sys.executable,
+        "scripts/batch_generate_official_pairs.py",
+        "--pairs",
+        ",".join(pairs),
+        "--quality-retry-attempts",
+        str(attempts),
+        "--retry-preset",
+        preset,
+        "--overwrite",
+    ]
+    result = subprocess.run(
+        command,
+        check=True,
+        capture_output=True,
+        text=True,
+    )
+    output_dir = parse_output_dir(result.stdout)
+    manifest_path = output_dir / "results.json"
+    quality_output_dir = output_dir / "quality"
+    run_quality_evaluation_to_dir(str(manifest_path), str(quality_output_dir))
+    return {
+        "preset": preset,
+        "pairs": pairs,
+        "attempts": attempts,
+        "command": " ".join(command),
+        "stdout": result.stdout,
+        "stderr": result.stderr,
+        "outputDir": str(output_dir),
+        "manifestPath": str(manifest_path),
+        "qualityReportPath": str(quality_output_dir / "tryon_quality_report.json"),
+    }
+
+
+def summarize_records(records: List[Dict[str, Any]], manifest_label: str, workbook_warning: str | None) -> Dict[str, Any]:
+    total = len(records)
+    decisions = {
+        decision: sum(1 for record in records if record["decision"] == decision)
+        for decision in ["pass", "review", "fail"]
+    }
+    avg_score = (
+        round(sum(record.get("score", 0) for record in records) / total, 2)
+        if total
+        else 0
+    )
+
+    return {
+        "manifest": manifest_label,
+        "totalCandidates": total,
+        "averageScore": avg_score,
+        "decisions": decisions,
+        "workbookWarning": workbook_warning,
+        "reviewPairs": [
+            {
+                "pair": record["pair"],
+                "attempt": record["attempt"],
+                "score": record["score"],
+                "decision": record["decision"],
+                "decisionSource": record.get("decisionSource", "rules"),
+                "reasons": record.get("reasons", []),
+                "warnings": record.get("warnings", []),
+            }
+            for record in records
+            if record["decision"] != "pass"
+        ],
+    }
+
+
+def merge_retry_records(
+    base_records: List[Dict[str, Any]],
+    retry_records: List[Dict[str, Any]],
+) -> List[Dict[str, Any]]:
+    merged = {record["pair"]: record for record in base_records}
+    decision_rank = {"fail": 0, "review": 1, "pass": 2}
+
+    for record in retry_records:
+        pair = record["pair"]
+        current = merged.get(pair)
+        if current is None:
+            merged[pair] = record
+            continue
+
+        current_rank = decision_rank.get(current.get("decision", "review"), 0)
+        retry_rank = decision_rank.get(record.get("decision", "review"), 0)
+        current_score = current.get("score", 0)
+        retry_score = record.get("score", 0)
+
+        if retry_rank > current_rank or (
+            retry_rank == current_rank and retry_score >= current_score
+        ):
+            retry_record = dict(record)
+            retry_record["retryHistory"] = current.get("retryHistory", []) + [current]
+            merged[pair] = retry_record
+        else:
+            current.setdefault("retryHistory", []).append(record)
+
+    return list(merged.values())
+
+
+def write_quality_report(
+    report_path: Path,
+    records: List[Dict[str, Any]],
+    thresholds: Dict[str, Any],
+    manifest_label: str,
+    workbook_warning: str | None,
+    source_manifests: List[str],
+) -> Dict[str, Any]:
+    summary = summarize_records(records, manifest_label, workbook_warning)
+    payload = {
+        "summary": summary,
+        "thresholds": thresholds,
+        "records": records,
+        "workflow": {
+            "mode": "auto_retry" if any(record.get("retryHistory") for record in records) else "rule_only",
+            "sourceManifest": manifest_label,
+            "sourceManifests": source_manifests,
+        },
+    }
+    report_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    return payload
 
 
 def build_ops_actions(records: List[Dict[str, Any]], style_labels: Dict[str, Dict[str, str]]) -> Dict[str, Any]:
@@ -271,14 +427,51 @@ def main() -> int:
         run_quality_evaluation(args.manifest)
 
     report = load_json(QUALITY_REPORT_PATH)
-    records = report["records"]
+    initial_records = report["records"]
     style_labels = load_style_labels(STYLE_LABEL_PATH)
+    retry_runs = []
+    final_records = initial_records
+    final_manifest_label = report["summary"]["manifest"]
+    source_manifests = [report["summary"]["manifest"]]
+
+    if args.auto_retry:
+        retry_plan = build_retry_plan(initial_records)
+        grouped_pairs: Dict[str, List[str]] = {}
+        for item in retry_plan:
+            grouped_pairs.setdefault(item["retryPreset"], []).append(item["pair"])
+
+        retry_records = []
+        for preset, pairs in grouped_pairs.items():
+            run_info = run_retry_batch(preset, pairs, args.retry_attempts)
+            retry_runs.append(run_info)
+            retry_report = load_json(Path(run_info["qualityReportPath"]))
+            retry_records.extend(retry_report.get("records", []))
+            source_manifests.append(run_info["manifestPath"])
+
+        if retry_records:
+            final_records = merge_retry_records(initial_records, retry_records)
+            final_manifest_label = "merged:" + " | ".join(source_manifests)
+
+    final_payload = write_quality_report(
+        QUALITY_REPORT_PATH,
+        final_records,
+        report.get("thresholds", {}),
+        final_manifest_label,
+        report["summary"].get("workbookWarning"),
+        source_manifests,
+    )
+
+    if args.refresh_ops_report or args.auto_retry:
+        subprocess.run([sys.executable, "scripts/build_ops_daily_report.py"], check=True)
+
     payload = {
-        "workflowVersion": "v1",
-        "mode": "safe_existing_outputs",
-        "qualitySummary": report["summary"],
-        "retryPlan": build_retry_plan(records),
-        "opsActions": build_ops_actions(records, style_labels),
+        "workflowVersion": "v2",
+        "mode": "auto_retry" if args.auto_retry else "safe_existing_outputs",
+        "qualitySummary": final_payload["summary"],
+        "initialQualitySummary": report["summary"],
+        "retryPlan": build_retry_plan(initial_records),
+        "retryRuns": retry_runs,
+        "opsActions": build_ops_actions(final_records, style_labels),
     }
 
     output_dir = Path(args.output_dir)

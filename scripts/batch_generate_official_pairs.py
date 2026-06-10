@@ -39,6 +39,14 @@ RETRY_PRESETS = {
         "Every visible nail must clearly show the target manicure design from the reference image. Do not leave nails bare, nearly nude, or close to the original natural nail look. Preserve the reference colors, patterns, finish, and decoration.",
         "Increase reference-style fidelity. Make the manicure visibly present on each nail while still preserving the original hand pose, skin tone, and lighting.",
     ],
+    "detail": [
+        "The manicure is present but too weak. Increase the visibility of color, pattern, finish, and decorative details without changing the hand structure.",
+        "Sharpen the nail art details so the applied design reads clearly on each nail while keeping the same pose, lighting, and background.",
+    ],
+    "preserve": [
+        "Preserve the original hand pose, skin tone, lighting, camera angle, and background exactly. Only refine the manicure placement and appearance.",
+        "Avoid global changes to the hand image. Keep the try-on result anchored to the source photo while re-applying the manicure more carefully.",
+    ],
     "mixed": [
         "Strictly align the manicure within the natural nail boundaries and keep every design attached to the visible nail bed. Avoid floating or shifted placement.",
         "Every visible nail must clearly show the target manicure design from the reference image. Do not leave nails bare or natural-looking.",

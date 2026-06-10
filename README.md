@@ -63,6 +63,14 @@ flowchart TD
 - `scripts/run_tryon_agent_workflow.py` 负责串联质检结果、重试候选、结果归档和运营动作建议。
 - `scripts/build_ops_daily_report.py` 负责汇总热度、质检队列和工作流结果，生成运营日报。
 
+自动重试时，Workflow 会按失败信号分组后自动选择 preset，再调用生成接口并重新质检：
+
+- `alignment`：位置偏移、边界漂移、贴合不稳。
+- `style`：款式应用太弱、图案不够明显。
+- `detail`：有款式但细节不足，需要强化显色和装饰。
+- `preserve`：全局漂移偏大，但要优先保住手部结构、肤色和背景。
+- `mixed`：缺失、失败或多种信号混合。
+
 ## 功能模块
 
 | 模块 | 状态 | 说明 |
@@ -310,6 +318,12 @@ npm run workflow:tryon
 
 - `analysis/tryon_agent_workflow_v1/tryon_agent_workflow.json`
 - `analysis/tryon_agent_workflow_v1/tryon_agent_workflow.md`
+
+自动执行重试并刷新日报：
+
+```bash
+python scripts/run_tryon_agent_workflow.py --auto-retry --refresh-ops-report
+```
 
 生成智能运营日报：
 
