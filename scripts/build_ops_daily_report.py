@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import argparse
 import csv
 import json
 from collections import Counter
@@ -7,12 +8,26 @@ from datetime import date
 from pathlib import Path
 from typing import Any, Dict, List
 
+from llm_utils import call_chat_json, get_llm_config
+
 
 STYLE_LABEL_PATH = Path("data/official_style_label_draft_v1.csv")
 POPULARITY_PATH = Path("data/mock_style_popularity.json")
 QUALITY_PATH = Path("analysis/tryon_quality_v1/tryon_quality_report.json")
 WORKFLOW_PATH = Path("analysis/tryon_agent_workflow_v1/tryon_agent_workflow.json")
 OUTPUT_DIR = Path("analysis/ops_daily_report_v1")
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Build an operations daily report with optional LLM strategy writing."
+    )
+    parser.add_argument(
+        "--enable-llm",
+        action="store_true",
+        help="Use an OpenAI-compatible LLM to generate strategy copy from the rule report.",
+    )
+    return parser.parse_args()
 
 
 def normalize_style_key(value: str | int | None) -> str:
@@ -113,6 +128,26 @@ def render_markdown(report: Dict[str, Any]) -> str:
     for risk in report["risk_notes"]:
         lines.append(f"- {risk}")
 
+    llm_strategy = report.get("llm_strategy", {})
+    if llm_strategy.get("status") == "success":
+        content = llm_strategy.get("content", {})
+        lines.extend(["", "## LLM 运营策略增强", ""])
+        if content.get("executive_summary"):
+            lines.append(f"- 总结：{content['executive_summary']}")
+        for item in content.get("campaign_copy", []):
+            lines.append(f"- 活动文案：{item}")
+        for item in content.get("segment_actions", []):
+            lines.append(f"- 人群动作：{item}")
+        for item in content.get("experiment_plan", []):
+            lines.append(f"- 实验计划：{item}")
+        for item in content.get("risk_controls", []):
+            lines.append(f"- 风险控制：{item}")
+    elif llm_strategy:
+        lines.extend(["", "## LLM 运营策略增强", ""])
+        lines.append(f"- 状态：{llm_strategy.get('status')}")
+        if llm_strategy.get("message"):
+            lines.append(f"- 说明：{llm_strategy['message']}")
+
     lines.extend(["", "## 下一步执行", ""])
     for item in report["execution_plan"]:
         lines.append(f"- {item}")
@@ -120,7 +155,40 @@ def render_markdown(report: Dict[str, Any]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def build_llm_strategy(report: Dict[str, Any]) -> Dict[str, Any]:
+    config = get_llm_config("LLM")
+    prompt = (
+        "你是美甲平台运营策略助手。请基于下面的结构化日报生成可执行运营策略。"
+        "必须只返回 JSON，不要 Markdown。JSON 字段：executive_summary(string), "
+        "campaign_copy(array), segment_actions(array), experiment_plan(array), "
+        "risk_controls(array)。要求：不要伪造真实用户数据；如果数据来自 mock，请明确谨慎使用；"
+        "策略要结合热度、增长、质检门禁和重试队列。"
+    )
+    response = call_chat_json(
+        messages=[
+            {
+                "role": "system",
+                "content": "You write concise, practical e-commerce operations strategy in Chinese.",
+            },
+            {
+                "role": "user",
+                "content": f"{prompt}\n\n日报 JSON：\n{json.dumps(report, ensure_ascii=False)}",
+            },
+        ],
+        config=config,
+        temperature=0.35,
+        timeout=90,
+    )
+    return {
+        "status": "success",
+        "model": response["model"],
+        "content": response["json"],
+        "usage": response.get("usage"),
+    }
+
+
 def main() -> int:
+    args = parse_args()
     labels = load_style_labels()
     popularity_payload = load_json(POPULARITY_PATH)
     quality_report = load_json(QUALITY_PATH)
@@ -186,6 +254,20 @@ def main() -> int:
             "retry_plan": workflow.get("retryPlan", []),
         },
     }
+
+    if args.enable_llm:
+        try:
+            report["llm_strategy"] = build_llm_strategy(report)
+        except Exception as error:  # noqa: BLE001 - rule report remains valid.
+            report["llm_strategy"] = {
+                "status": "fallback_rules_only",
+                "message": str(error),
+            }
+    else:
+        report["llm_strategy"] = {
+            "status": "skipped",
+            "message": "Run `npm run report:ops:llm` to enable LLM strategy generation.",
+        }
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     json_path = OUTPUT_DIR / "ops_daily_report.json"

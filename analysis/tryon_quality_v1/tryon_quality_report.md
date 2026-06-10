@@ -25,4 +25,4 @@ It uses lightweight engineering rules rather than a trained vision model.
 - A high drift score means the generated image may have changed pose, scene, crop, or hand structure too much.
 - `nailRegionChange` compares expected nail regions between source and generated images; very low change may mean the style is missing or too weak.
 - Retry candidates are marked for review because a human or later Agent step should choose the best candidate.
-- This v1 evaluator is intentionally conservative and should be upgraded with nail localization or a vision model later.
+- The rule system is the default fallback; optional VLM judging can escalate ambiguous or risky cases.

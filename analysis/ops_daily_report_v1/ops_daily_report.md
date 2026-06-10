@@ -1,6 +1,6 @@
 # 美甲智能运营日报 v1
 
-- 日期：2026-06-05
+- 日期：2026-06-10
 - 数据口径：official style labels + mock popularity + try-on quality report + Agent Workflow
 
 ## 今日趋势洞察
@@ -37,6 +37,11 @@
 - 当前热度来自 mock 数据，仅用于 MVP 验证，不能等同真实用户行为。
 - 质检 v1 是规则评估，仍需要人工抽检关键样例。
 - review 款式不建议直接进入首页主推，避免用户看到低质量试戴结果。
+
+## LLM 运营策略增强
+
+- 状态：skipped
+- 说明：Run `npm run report:ops:llm` to enable LLM strategy generation.
 
 ## 下一步执行
 

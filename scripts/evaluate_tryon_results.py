@@ -12,6 +12,7 @@ from typing import Any, Dict, Iterable, List
 from PIL import Image, ImageChops, ImageStat
 
 from extract_official_samples import normalize_samples
+from llm_utils import call_chat_json, get_llm_config, image_file_to_data_url
 
 
 DEFAULT_WORKBOOK = r"D:\Manicure\命题三美甲评测数据（对外版）.xlsx"
@@ -62,6 +63,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--fail-drift", type=float, default=0.42)
     parser.add_argument("--review-nail-change", type=float, default=0.035)
     parser.add_argument("--fail-nail-change", type=float, default=0.018)
+    parser.add_argument(
+        "--enable-vlm",
+        action="store_true",
+        help="Optionally add multimodal model judging on top of rule-based checks.",
+    )
+    parser.add_argument(
+        "--vlm-limit",
+        type=int,
+        default=8,
+        help="Maximum records sent to the multimodal model. Use 0 for all records.",
+    )
     return parser.parse_args()
 
 
@@ -101,6 +113,30 @@ def load_hand_urls(workbook_path: Path) -> tuple[Dict[int, str], str | None]:
         for sample in samples.get("handSamples", [])
         if sample.get("handUrl")
     }, None
+
+
+def load_source_urls(workbook_path: Path) -> tuple[Dict[int, str], Dict[int, str], str | None]:
+    if not workbook_path.exists():
+        warning = f"Workbook not found: {workbook_path}"
+        return {}, {}, warning
+
+    try:
+        samples = normalize_samples(workbook_path)
+    except Exception as error:  # noqa: BLE001 - keep evaluation resilient.
+        warning = f"Failed to read workbook: {error}"
+        return {}, {}, warning
+
+    hand_urls = {
+        int(sample["id"]): sample["handUrl"]
+        for sample in samples.get("handSamples", [])
+        if sample.get("handUrl")
+    }
+    style_urls = {
+        int(sample["id"]): sample.get("enhancedStyleUrl") or sample.get("originalStyleUrl")
+        for sample in samples.get("styleSamples", [])
+        if sample.get("enhancedStyleUrl") or sample.get("originalStyleUrl")
+    }
+    return hand_urls, style_urls, None
 
 
 def iter_candidates(manifest: Dict[str, Any]) -> Iterable[Dict[str, Any]]:
@@ -301,11 +337,134 @@ def evaluate_candidate(
         {
             "score": score,
             "decision": decision,
+            "decisionSource": "rules",
+            "ruleScore": score,
+            "ruleDecision": decision,
             "reasons": reasons,
             "warnings": warnings,
         }
     )
     return record
+
+
+def normalize_vlm_decision(value: Any) -> str:
+    decision = str(value or "review").strip().lower()
+    return decision if decision in {"pass", "review", "fail"} else "review"
+
+
+def choose_final_decision(rule_decision: str, vlm_decision: str) -> str:
+    order = {"pass": 0, "review": 1, "fail": 2}
+    return rule_decision if order[rule_decision] >= order[vlm_decision] else vlm_decision
+
+
+def build_vlm_messages(
+    record: Dict[str, Any],
+    hand_url: str | None,
+    style_url: str | None,
+) -> List[Dict[str, Any]]:
+    output_path = Path(record.get("output") or "")
+    image_items: List[Dict[str, Any]] = []
+    if hand_url:
+        image_items.append({"type": "image_url", "image_url": {"url": hand_url}})
+    if style_url:
+        image_items.append({"type": "image_url", "image_url": {"url": style_url}})
+    image_items.append(
+        {
+            "type": "image_url",
+            "image_url": {"url": image_file_to_data_url(output_path)},
+        }
+    )
+
+    prompt = (
+        "你是美甲 AI 试戴质检员。请依次查看图片：原始手图、款式参考图、生成试戴图。"
+        "如果前两张缺失，则只根据生成试戴图和规则分数判断。"
+        "请检查：1 指甲贴合是否准确；2 款式是否应用到指甲；3 手部结构、肤色、背景是否保真；"
+        "4 款式颜色和装饰是否与参考图一致。必须只返回 JSON，不要 Markdown。"
+        "JSON 字段：score(0-100), decision(pass/review/fail), alignment_score, "
+        "nail_coverage_score, hand_fidelity_score, style_consistency_score, "
+        "issues(array), retry_preset(alignment/style/mixed/none), explanation。"
+        f"规则系统初评分：{record.get('ruleScore')}，规则系统判断：{record.get('ruleDecision')}，"
+        f"规则原因：{record.get('reasons')}，规则警告：{record.get('warnings')}。"
+    )
+    return [
+        {
+            "role": "system",
+            "content": (
+                "You are a strict visual QA evaluator for manicure try-on images. "
+                "Return compact JSON only."
+            ),
+        },
+        {
+            "role": "user",
+            "content": [{"type": "text", "text": prompt}, *image_items],
+        },
+    ]
+
+
+def apply_vlm_evaluation(
+    records: List[Dict[str, Any]],
+    hand_urls: Dict[int, str],
+    style_urls: Dict[int, str],
+    limit: int,
+) -> Dict[str, Any]:
+    config = get_llm_config("VLM")
+    selected = [record for record in records if record.get("decision") != "pass"]
+    selected.extend(record for record in records if record.get("decision") == "pass")
+    if limit > 0:
+        selected = selected[:limit]
+
+    summary = {
+        "enabled": True,
+        "model": config.get("model"),
+        "apiBase": config.get("api_base"),
+        "requested": len(selected),
+        "succeeded": 0,
+        "failed": 0,
+        "errors": [],
+    }
+
+    for record in selected:
+        hand_url = hand_urls.get(record.get("handId") or -1)
+        style_url = style_urls.get(record.get("styleId") or -1)
+        try:
+            response = call_chat_json(
+                messages=build_vlm_messages(record, hand_url, style_url),
+                config=config,
+                temperature=0.1,
+                timeout=120,
+            )
+            vlm_json = response["json"]
+            vlm_decision = normalize_vlm_decision(vlm_json.get("decision"))
+            vlm_score = int(max(0, min(100, round(float(vlm_json.get("score", 0))))))
+            rule_decision = record.get("ruleDecision", record.get("decision", "review"))
+            final_decision = choose_final_decision(rule_decision, vlm_decision)
+            final_score = round((record.get("ruleScore", 0) * 0.55) + (vlm_score * 0.45))
+
+            record["vlmEvaluation"] = {
+                "model": response["model"],
+                "score": vlm_score,
+                "decision": vlm_decision,
+                "alignmentScore": vlm_json.get("alignment_score"),
+                "nailCoverageScore": vlm_json.get("nail_coverage_score"),
+                "handFidelityScore": vlm_json.get("hand_fidelity_score"),
+                "styleConsistencyScore": vlm_json.get("style_consistency_score"),
+                "issues": vlm_json.get("issues", []),
+                "retryPreset": vlm_json.get("retry_preset"),
+                "explanation": vlm_json.get("explanation", ""),
+                "usage": response.get("usage"),
+            }
+            record["score"] = min(record.get("score", 0), final_score)
+            record["decision"] = final_decision
+            record["decisionSource"] = "rules+vlm"
+            if final_decision != rule_decision:
+                record.setdefault("warnings", []).append("vlm_escalated_decision")
+            summary["succeeded"] += 1
+        except Exception as error:  # noqa: BLE001 - keep fallback usable.
+            record.setdefault("warnings", []).append(f"vlm_failed:{error}")
+            summary["failed"] += 1
+            summary["errors"].append({"pair": record.get("pair"), "message": str(error)})
+
+    return summary
 
 
 def summarize(records: List[Dict[str, Any]], manifest_path: Path, workbook_warning: str | None) -> Dict[str, Any]:
@@ -331,6 +490,7 @@ def summarize(records: List[Dict[str, Any]], manifest_path: Path, workbook_warni
                 "attempt": record["attempt"],
                 "score": record["score"],
                 "decision": record["decision"],
+                "decisionSource": record.get("decisionSource", "rules"),
                 "reasons": record["reasons"],
                 "warnings": record["warnings"],
             }
@@ -359,6 +519,16 @@ def render_markdown(summary: Dict[str, Any], records: List[Dict[str, Any]]) -> s
 
     if summary.get("workbookWarning"):
         lines.append(f"- Workbook/source check warning: {summary['workbookWarning']}")
+
+    if summary.get("vlm"):
+        vlm = summary["vlm"]
+        lines.extend(
+            [
+                f"- VLM enabled: {vlm.get('enabled')}",
+                f"- VLM model: `{vlm.get('model')}`",
+                f"- VLM succeeded / failed: {vlm.get('succeeded')} / {vlm.get('failed')}",
+            ]
+        )
 
     lines.extend(
         [
@@ -395,7 +565,7 @@ def render_markdown(summary: Dict[str, Any], records: List[Dict[str, Any]]) -> s
             "- A high drift score means the generated image may have changed pose, scene, crop, or hand structure too much.",
             "- `nailRegionChange` compares expected nail regions between source and generated images; very low change may mean the style is missing or too weak.",
             "- Retry candidates are marked for review because a human or later Agent step should choose the best candidate.",
-            "- This v1 evaluator is intentionally conservative and should be upgraded with nail localization or a vision model later.",
+            "- The rule system is the default fallback; optional VLM judging can escalate ambiguous or risky cases.",
         ]
     )
     return "\n".join(lines) + "\n"
@@ -414,14 +584,20 @@ def main() -> int:
     )
     manifest_path = resolve_manifest_path(args.manifest)
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    hand_urls, workbook_warning = load_hand_urls(Path(args.workbook))
+    hand_urls, style_urls, workbook_warning = load_source_urls(Path(args.workbook))
     source_cache: Dict[str, Image.Image] = {}
 
     records = [
         evaluate_candidate(candidate, hand_urls, source_cache, thresholds)
         for candidate in iter_candidates(manifest)
     ]
+    vlm_summary = None
+    if args.enable_vlm:
+        vlm_summary = apply_vlm_evaluation(records, hand_urls, style_urls, args.vlm_limit)
+
     summary = summarize(records, manifest_path, workbook_warning)
+    if vlm_summary:
+        summary["vlm"] = vlm_summary
 
     output_dir = Path(args.output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)

@@ -7,8 +7,11 @@
     "start": "node server.mjs",
     "batch:official": "python scripts/batch_generate_official_pairs.py",
     "evaluate:tryon": "python scripts/evaluate_tryon_results.py",
+    "evaluate:tryon:vlm": "python scripts/evaluate_tryon_results.py --enable-vlm",
     "workflow:tryon": "python scripts/run_tryon_agent_workflow.py",
     "report:ops": "python scripts/build_ops_daily_report.py",
+    "report:ops:llm": "python scripts/build_ops_daily_report.py --enable-llm",
+    "analyze:agent-logs": "python scripts/analyze_agent_logs.py",
     "labels:styles": "python scripts/export_style_label_template.py",
     "analyze:styles": "python scripts/analyze_style_labels.py",
     "strategy:ops": "python scripts/build_ops_strategy_rules.py"

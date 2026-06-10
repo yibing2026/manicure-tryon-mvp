@@ -1,5 +1,5 @@
 {
-  "date": "2026-06-05",
+  "date": "2026-06-10",
   "report_version": "v1",
   "data_scope": "official style labels + mock popularity + try-on quality report + Agent Workflow",
   "data_sources": {
@@ -321,6 +321,7 @@
           "attempt": 0,
           "score": 90,
           "decision": "review",
+          "decisionSource": "rules",
           "reasons": [],
           "warnings": [
             "nail_region_change_review"
@@ -331,6 +332,7 @@
           "attempt": 0,
           "score": 90,
           "decision": "review",
+          "decisionSource": "rules",
           "reasons": [],
           "warnings": [
             "nail_region_change_review"
@@ -366,5 +368,9 @@
         }
       }
     ]
+  },
+  "llm_strategy": {
+    "status": "skipped",
+    "message": "Run `npm run report:ops:llm` to enable LLM strategy generation."
   }
 }
