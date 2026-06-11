@@ -8,7 +8,10 @@ from datetime import date
 from pathlib import Path
 from typing import Any, Dict, List
 
-from llm_utils import call_chat_json, get_llm_config
+try:
+    from llm_utils import call_chat_json, get_llm_config
+except ModuleNotFoundError:  # Allow pytest/package-style imports.
+    from scripts.llm_utils import call_chat_json, get_llm_config
 
 
 STYLE_LABEL_PATH = Path("data/official_style_label_draft_v1.csv")

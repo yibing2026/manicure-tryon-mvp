@@ -46,6 +46,12 @@ def parse_args() -> argparse.Namespace:
         help="Retry prompt variants generated for each auto-retry batch.",
     )
     parser.add_argument(
+        "--retry-provider",
+        default="doubao",
+        choices=["doubao", "openai", "mock"],
+        help="Generation provider used by auto-retry batches.",
+    )
+    parser.add_argument(
         "--refresh-ops-report",
         action="store_true",
         help="Rebuild the operations daily report after the final quality report is written.",
@@ -147,10 +153,17 @@ def build_retry_plan(records: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return plan
 
 
-def run_retry_batch(preset: str, pairs: List[str], attempts: int) -> Dict[str, Any]:
+def run_retry_batch(
+    preset: str,
+    pairs: List[str],
+    attempts: int,
+    provider: str,
+) -> Dict[str, Any]:
     command = [
         sys.executable,
         "scripts/batch_generate_official_pairs.py",
+        "--provider",
+        provider,
         "--pairs",
         ",".join(pairs),
         "--quality-retry-attempts",
@@ -173,6 +186,7 @@ def run_retry_batch(preset: str, pairs: List[str], attempts: int) -> Dict[str, A
         "preset": preset,
         "pairs": pairs,
         "attempts": attempts,
+        "provider": provider,
         "command": " ".join(command),
         "stdout": result.stdout,
         "stderr": result.stderr,
@@ -442,7 +456,12 @@ def main() -> int:
 
         retry_records = []
         for preset, pairs in grouped_pairs.items():
-            run_info = run_retry_batch(preset, pairs, args.retry_attempts)
+            run_info = run_retry_batch(
+                preset,
+                pairs,
+                args.retry_attempts,
+                args.retry_provider,
+            )
             retry_runs.append(run_info)
             retry_report = load_json(Path(run_info["qualityReportPath"]))
             retry_records.extend(retry_report.get("records", []))

@@ -80,7 +80,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--provider",
         default="doubao",
-        choices=["doubao", "openai"],
+        choices=["doubao", "openai", "mock"],
         help="Provider passed to the local generation endpoint.",
     )
     parser.add_argument(

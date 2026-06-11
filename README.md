@@ -45,6 +45,8 @@ flowchart LR
 
 当前版本已经完成生成、批量样例、自动质检、重试计划和运营 Copilot 的基础闭环。Workflow 默认运行在安全模式下：先复用已有试戴结果做质量评估和重试规划，不会自动消耗图像生成 API 额度。
 
+为了支持离线测试和 CI，后端提供 `provider=mock`。Mock Provider 不调用 OpenAI 或豆包，而是返回本地可解码的引导图/手图结果，并照常写入 API 调用日志，用于验证完整 Agent 流程。
+
 ```mermaid
 flowchart TD
   A["生成试戴图"] --> B["自动质检"]
@@ -95,6 +97,12 @@ flowchart TD
 - Node.js 18+
 - Python 3.9+
 - 可选：OpenAI API Key 或火山方舟/豆包 API Key
+
+安装开发测试依赖：
+
+```bash
+python -m pip install -r requirements-dev.txt
+```
 
 启动服务：
 
@@ -325,6 +333,12 @@ npm run workflow:tryon
 python scripts/run_tryon_agent_workflow.py --auto-retry --refresh-ops-report
 ```
 
+使用 Mock Provider 离线跑完整自动重试闭环：
+
+```bash
+npm run workflow:tryon:auto:mock
+```
+
 生成智能运营日报：
 
 ```bash
@@ -353,6 +367,14 @@ npm run analyze:agent-logs
 - `analysis/agent_log_insights_v1/agent_log_insights.json`
 - `analysis/agent_log_insights_v1/agent_log_insights.md`
 
+运行 pytest 评测集：
+
+```bash
+npm test
+```
+
+当前评测覆盖重试策略选择、重试结果合并、API 日志错误分类、Agent 迭代建议和运营日报规则映射。
+
 ## 关键产物
 
 - 试戴前端：[public/index.html](public/index.html)
@@ -379,9 +401,9 @@ npm run analyze:agent-logs
 
 ## 后续路线图
 
-1. **自动执行重试**：在预算阈值和最大重试次数可控的前提下，让 Workflow 自动执行重试命令并重新评估。
-2. **视觉质检升级**：接入手部关键点、指甲区域检测或多模态评分模型，提升对贴合偏移、覆盖度和风格一致性的判断能力。
-3. **真实运营数据接入**：将 mock 热度替换为真实曝光、点击、收藏、试戴、预约和成交数据，形成可持续更新的趋势监控。
+1. **视觉质检升级**：接入手部关键点、指甲区域检测或多模态评分模型，提升对贴合偏移、覆盖度和风格一致性的判断能力。
+2. **真实运营数据接入**：将 mock 热度替换为真实曝光、点击、收藏、试戴、预约和成交数据，形成可持续更新的趋势监控。
+3. **CI 门禁**：将 `npm test`、规则质检和 mock workflow 接入 GitHub Actions，形成提交级回归检查。
 4. **LLM Copilot 升级**：在保留规则可解释性的基础上，用 LLM 生成更自然的运营文案和实验复盘。
 5. **数据库与可观测性**：将 JSONL 日志升级为数据库存储，支持按 requestId、款式、模型、失败类型和重试次数检索。
 

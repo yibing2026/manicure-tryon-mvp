@@ -900,6 +900,10 @@ function summarizeAsset(asset) {
 }
 
 function getTryOnModelName(provider) {
+  if (provider === "mock") {
+    return "mock-tryon-v1";
+  }
+
   if (provider === "doubao") {
     const config = getDoubaoModelConfig();
     return `${config.model}${config.version ? `@${config.version}` : ""}`;
@@ -999,6 +1003,23 @@ async function callOpenAiTryOn({ prompt, handAsset, styleAsset, guideAsset }) {
   }
 
   throw new Error("OpenAI response did not include b64_json or url");
+}
+
+async function callMockTryOn({ handAsset, guideAsset }) {
+  const outputAsset = guideAsset?.buffer?.length ? guideAsset : handAsset;
+  return {
+    imageDataUrl: outputToDataUrl(outputAsset.buffer.toString("base64"), outputAsset.mimeType),
+    raw: {
+      usage: {
+        note: "mock provider does not call external image generation APIs",
+      },
+    },
+    model: "mock-tryon-v1",
+    requestBodyPreview: {
+      mode: "copy-guide-or-hand",
+      source: outputAsset === guideAsset ? "guideImage" : "handImage",
+    },
+  };
 }
 
 function getDoubaoImageInput(asset) {
@@ -1149,7 +1170,12 @@ async function handleTryOnGeneration(req, res) {
 
   try {
     const body = await readJsonBody(req);
-    const provider = body.provider === "doubao" ? "doubao" : "openai";
+    const provider =
+      body.provider === "doubao"
+        ? "doubao"
+        : body.provider === "mock"
+          ? "mock"
+          : "openai";
     const prompt = buildTryOnPrompt(body.prompt);
 
     logEntry = {
@@ -1187,7 +1213,9 @@ async function handleTryOnGeneration(req, res) {
     const result =
       provider === "doubao"
         ? await callDoubaoTryOn({ prompt, handAsset, styleAsset, guideAsset })
-        : await callOpenAiTryOn({ prompt, handAsset, styleAsset, guideAsset });
+        : provider === "mock"
+          ? await callMockTryOn({ handAsset, guideAsset })
+          : await callOpenAiTryOn({ prompt, handAsset, styleAsset, guideAsset });
 
     await appendApiCallLog({
       ...logEntry,
